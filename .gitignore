@@ -1,38 +1,69 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # Dependencies
-node_modules
+node_modules/
 .pnp
 .pnp.js
+.pnpm-store
 
-# Local env files
+# Environment
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
 
-# Testing
-coverage
-
-# Turbo
-.turbo
-
-# Vercel
-.vercel
-
-# Build Outputs
+# Build
 .next/
 out/
-build
-dist
+build/
+dist/
+*.tsbuildinfo
 
+# Turbo
+.turbo/
 
-# Debug
+# Vercel
+.vercel/
+
+# Prisma / SQLite
+*.db
+*.db-journal
+
+# Logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-# Misc
+# Testing
+coverage/
+.nyc_output/
+
+# Cache
+.cache/
+.parcel-cache/
+.eslintcache
+
+# Runtime
+*.pid
+*.pid.lock
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Certificates
 *.pem
+
+# Editors
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Redis
+dump.rdb
+
+# Temp
+tmp/
+temp/
