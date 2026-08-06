@@ -67,3 +67,9 @@ dump.rdb
 # Temp
 tmp/
 temp/
+
+# AI editors
+.claude/
+.windsurf/
+.agents/
+skills-lock.json
