@@ -13,6 +13,14 @@ enum RunStatus {
   FAILED
 }
 
+enum NodeStatus {
+  PENDING
+  RUNNING
+  SUCCESS
+  ERROR
+  STUCK
+}
+
 model Workspace {
   id String @id @default(cuid())
   name String
@@ -42,4 +50,19 @@ model Run {
   updatedAt DateTime @updatedAt
   startedAt DateTime @default(now())
   completedAt DateTime?
+
+  nodes Node[]
+}
+
+model Node {
+  id String @id @default(cuid())
+  name String
+  parentSpanId String?
+  spanId String @unique
+  status NodeStatus @default(RUNNING)
+  startTime DateTime @default(now())
+  endTime DateTime?
+  runId String
+  run Run @relation(fields: [runId], references: [id])
+  attributes Json?
 }
