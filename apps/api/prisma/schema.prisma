@@ -13,4 +13,16 @@ model Workspace {
   slug String @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  apiKeys ApiKey[]
+}
+
+model ApiKey {
+  id String @id @default(cuid())
+  apiKey String @unique
+  isActive Boolean @default(true)
+  workspaceId String
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
