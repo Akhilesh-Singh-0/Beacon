@@ -7,6 +7,12 @@ datasource db {
   provider = "postgresql"
 }
 
+enum RunStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
 model Workspace {
   id String @id @default(cuid())
   name String
@@ -15,6 +21,7 @@ model Workspace {
   updatedAt DateTime @updatedAt
 
   apiKeys ApiKey[]
+  runs Run[]
 }
 
 model ApiKey {
@@ -25,4 +32,14 @@ model ApiKey {
   workspace Workspace @relation(fields: [workspaceId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Run {
+  id String @id @default(cuid())
+  workspaceId String
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  status RunStatus @default(RUNNING)
+  updatedAt DateTime @updatedAt
+  startedAt DateTime @default(now())
+  completedAt DateTime?
 }
