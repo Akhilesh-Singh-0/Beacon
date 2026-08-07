@@ -52,6 +52,7 @@ model Run {
   completedAt DateTime?
 
   nodes Node[]
+  edges Edge[]
 }
 
 model Node {
@@ -65,4 +66,17 @@ model Node {
   runId String
   run Run @relation(fields: [runId], references: [id])
   attributes Json?
+
+  sourceEdges Edge[] @relation("EdgeSource")
+  targetEdges Edge[] @relation("EdgeTarget")
+}
+
+model Edge {
+  id String @id @default(cuid())
+  runId String
+  run Run @relation(fields: [runId], references: [id])
+  sourceNodeId String
+  source Node @relation("EdgeSource", fields: [sourceNodeId], references: [id])
+  targetNodeId String
+  target Node @relation("EdgeTarget", fields: [targetNodeId], references: [id])
 }
