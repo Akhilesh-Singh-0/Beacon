@@ -47,9 +47,3 @@ export const connectRedis = async () => {
     process.exit(1)
   }
 }
-
-process.on('SIGINT', async () => {
-  console.log('[Redis] shutting down...')
-  await redis.quit()
-  process.exit(0)
-})
