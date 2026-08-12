@@ -1,5 +1,5 @@
 import { Queue } from "bullmq";
-import { redis } from "../config/redis";
+import { redis } from "../plugins/redis"
 
 export const SPAN_QUEUE = "span-processing";
 
