@@ -1,6 +1,7 @@
-import { redis } from "./plugins/redis";
+import { connectRedis } from "./lib/redis";
 import { shutdown } from "./shutdown";
 import { env } from "./config/env";
+import "./workers/span.worker";
 import app from "./app";
 
 process.on("SIGINT", () => shutdown(app, "SIGINT"));
@@ -8,8 +9,7 @@ process.on("SIGTERM", () => shutdown(app, "SIGTERM"));
 
 async function start() {
   try {
-    await redis.ping();
-    app.log.info("Redis connection verified");
+    await connectRedis();
 
     await app.listen({
       host: "0.0.0.0",
