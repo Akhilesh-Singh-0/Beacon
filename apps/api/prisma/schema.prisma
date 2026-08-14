@@ -44,6 +44,7 @@ model ApiKey {
 
 model Run {
   id String @id @default(cuid())
+  traceId String
   workspaceId String
   workspace Workspace @relation(fields: [workspaceId], references: [id])
   status RunStatus @default(RUNNING)
@@ -53,6 +54,8 @@ model Run {
 
   nodes Node[]
   edges Edge[]
+
+  @@unique([workspaceId, traceId])
 }
 
 model Node {
