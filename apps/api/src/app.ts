@@ -2,8 +2,9 @@ import Fastify from "fastify";
 import "./queues/span.queue";
 import { env } from "./config/env";
 import { errorHandler } from "./plugins/error-handler";
-import { healthRoutes } from "./routes/health";
-import prismaPlugin from "./plugins/prisma"
+import { healthPlugin } from "./plugins/health";
+import prismaPlugin from "./plugins/prisma";
+import { ingestionRoutes } from "./modules/ingestion/ingestion.route"
 
 const app = Fastify({
   logger: {
@@ -11,8 +12,9 @@ const app = Fastify({
   },
 });
 
-app.register(healthRoutes);
+app.register(healthPlugin);
 app.register(errorHandler);
-app.register(prismaPlugin)
+app.register(prismaPlugin);
+app.register(ingestionRoutes);
 
 export default app;
