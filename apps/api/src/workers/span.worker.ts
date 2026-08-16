@@ -1,6 +1,5 @@
 import { Worker } from "bullmq";
 import { NodeStatus, Prisma } from "../generated/prisma";
-
 import { prisma } from "../lib/prisma";
 import { redis } from "../lib/redis";
 import type { IngestionPayload } from "../modules/ingestion/ingestion.schema";
@@ -24,7 +23,6 @@ export const spanWorker = new Worker<SpanJobData>(
       attributes,
     } = job.data;
 
-    // 1. Find or create the Run
     let run = await prisma.run.findUnique({
       where: {
         workspaceId_traceId: {
@@ -50,7 +48,6 @@ export const spanWorker = new Worker<SpanJobData>(
       runId: run.id,
     });
 
-    // 2. Convert OTEL nanosecond timestamps to JavaScript Dates
     const startTime = new Date(
       Number(startTimeUnixNano) / 1_000_000,
     );
@@ -59,7 +56,6 @@ export const spanWorker = new Worker<SpanJobData>(
       ? new Date(Number(endTimeUnixNano) / 1_000_000)
       : null;
 
-    // 3. Map OTEL status to Beacon NodeStatus
     let nodeStatus: NodeStatus = NodeStatus.RUNNING;
 
     if (status?.code === "OK") {
@@ -68,7 +64,6 @@ export const spanWorker = new Worker<SpanJobData>(
       nodeStatus = NodeStatus.ERROR;
     }
 
-    // 4. Create Node
     let node;
 
     try {
@@ -85,7 +80,6 @@ export const spanWorker = new Worker<SpanJobData>(
         },
       });
     } catch (error) {
-      // Duplicate span means this job was already processed.
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === "P2002"
@@ -98,8 +92,6 @@ export const spanWorker = new Worker<SpanJobData>(
         return;
       }
 
-      // Unknown/database errors should reach BullMQ
-      // so its retry mechanism can handle them.
       throw error;
     }
 
@@ -109,7 +101,24 @@ export const spanWorker = new Worker<SpanJobData>(
       runId: run.id,
     });
 
-    // 5. Create Edge when the span has a parent
+    await redis.publish(
+      `run:${run.id}`,
+      JSON.stringify({
+        type: "node.created",
+        runId: run.id,
+        node: {
+          id: node.id,
+          spanId: node.spanId,
+          parentSpanId: node.parentSpanId,
+          name: node.name,
+          startTime: node.startTime,
+          endTime: node.endTime,
+          status: node.status,
+          attributes: node.attributes,
+        },
+      }),
+    );
+
     if (!parentSpanId) {
       return;
     }
@@ -120,7 +129,6 @@ export const spanWorker = new Worker<SpanJobData>(
       },
     });
 
-    // Parent may arrive after the child.
     if (!parentNode) {
       console.warn("Parent node not found, skipping edge creation", {
         parentSpanId,
@@ -146,8 +154,6 @@ export const spanWorker = new Worker<SpanJobData>(
         targetNodeId: node.id,
       });
     } catch (error) {
-      // A duplicate edge should not cause the entire span
-      // processing job to be retried.
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === "P2002"
@@ -163,6 +169,18 @@ export const spanWorker = new Worker<SpanJobData>(
 
       throw error;
     }
+
+    await redis.publish(
+      `run:${run.id}`,
+      JSON.stringify({
+        type: "edge.created",
+        runId: run.id,
+        edge: {
+          sourceNodeId: parentNode.id,
+          targetNodeId: node.id,
+        },
+      }),
+    );
   },
   {
     connection: redis,
