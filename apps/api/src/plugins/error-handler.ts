@@ -1,7 +1,7 @@
-import type { FastifyInstance } from "fastify";
+import type { FastifyError, FastifyInstance } from "fastify";
 
 export async function errorHandler(app: FastifyInstance) {
-  app.setErrorHandler((error, request, reply) => {
+  app.setErrorHandler((error: FastifyError, request, reply) => {
     const statusCode =
       error.statusCode && error.statusCode >= 400 && error.statusCode < 600
         ? error.statusCode

@@ -76,13 +76,13 @@ export const spanWorker = new Worker<SpanJobData>(
           startTime,
           endTime,
           status: nodeStatus,
-          attributes,
+          attributes: (attributes as Prisma.InputJsonValue) ?? null,
         },
       });
-    } catch (error) {
+    } catch (err: unknown) {
       if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === "P2002"
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        (err as Prisma.PrismaClientKnownRequestError).code === "P2002"
       ) {
         console.warn("Span already processed, skipping", {
           jobId: job.id,
@@ -92,7 +92,7 @@ export const spanWorker = new Worker<SpanJobData>(
         return;
       }
 
-      throw error;
+      throw err;
     }
 
     console.log("Node created", {
@@ -153,10 +153,10 @@ export const spanWorker = new Worker<SpanJobData>(
         sourceNodeId: parentNode.id,
         targetNodeId: node.id,
       });
-    } catch (error) {
+    } catch (err: unknown) {
       if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === "P2002"
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        (err as Prisma.PrismaClientKnownRequestError).code === "P2002"
       ) {
         console.warn("Edge already exists, skipping", {
           parentSpanId,
@@ -167,7 +167,7 @@ export const spanWorker = new Worker<SpanJobData>(
         return;
       }
 
-      throw error;
+      throw err;
     }
 
     await redis.publish(

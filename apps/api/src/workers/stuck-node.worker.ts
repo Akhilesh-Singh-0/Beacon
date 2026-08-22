@@ -1,6 +1,5 @@
-import { Worker } from "bullmq";
+import { Queue, Worker } from "bullmq";
 import { NodeStatus } from "../generated/prisma";
-
 import { prisma } from "../lib/prisma";
 import { redis } from "../lib/redis";
 
@@ -10,6 +9,10 @@ const STUCK_NODE_INTERVAL_MS = 60 * 1000;
 type StuckNodeJob = {
   type: "detect-stuck-nodes";
 };
+
+const stuckNodeQueue = new Queue("stuck-node-detection", {
+  connection: redis,
+});
 
 export const stuckNodeWorker = new Worker<StuckNodeJob>(
   "stuck-node-detection",
@@ -87,7 +90,7 @@ stuckNodeWorker.on("error", (error) => {
 });
 
 export async function registerStuckNodeScheduler() {
-  await stuckNodeWorker.upsertJobScheduler(
+  await stuckNodeQueue.upsertJobScheduler(
     "stuck-node-detector",
     {
       every: STUCK_NODE_INTERVAL_MS,
