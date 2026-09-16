@@ -23,23 +23,19 @@ export const spanWorker = new Worker<SpanJobData>(
       attributes,
     } = job.data;
 
-    let run = await prisma.run.findUnique({
+    const run = await prisma.run.upsert({
       where: {
         workspaceId_traceId: {
           workspaceId,
           traceId,
         },
       },
+      create: {
+        workspaceId,
+        traceId,
+      },
+      update: {},
     });
-
-    if (!run) {
-      run = await prisma.run.create({
-        data: {
-          workspaceId,
-          traceId,
-        },
-      });
-    }
 
     console.log("Processing span", {
       jobId: job.id,
