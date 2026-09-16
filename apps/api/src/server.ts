@@ -11,13 +11,13 @@ process.on("SIGTERM", () => shutdown(app, "SIGTERM"));
 async function start() {
   try {
     await connectRedis();
+    await registerStuckNodeScheduler();
 
     await app.listen({
       host: "0.0.0.0",
       port: env.PORT,
     });
 
-    await registerStuckNodeScheduler();
   } catch (err) {
     app.log.error(err);
     process.exit(1);
