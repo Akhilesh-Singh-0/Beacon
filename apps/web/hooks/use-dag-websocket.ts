@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import type { Edge, Node } from "@xyflow/react";
 
-import type { DagNodeData } from "@/components/dag/dag-node";
+import type {
+  DagNodeData,
+} from "@/components/dag/dag-config";
 
 type ExistingGraphNode = {
   id: string;
@@ -29,40 +31,37 @@ type GraphResponse = {
 type NodeCreatedEvent = {
   type: "node.created";
   runId: string;
-  node: {
-    id: string;
-    spanId: string;
-    parentSpanId: string | null;
-    name: string;
-    startTime: string;
-    endTime: string | null;
-    status: DagNodeData["status"];
-    attributes: unknown;
-  };
+  node: ExistingGraphNode;
+};
+
+type NodeUpdatedEvent = {
+  type: "node.updated";
+  runId: string;
+  node: ExistingGraphNode;
 };
 
 type EdgeCreatedEvent = {
   type: "edge.created";
   runId: string;
-  edge: {
-    sourceNodeId: string;
-    targetNodeId: string;
-  };
+  edge: ExistingGraphEdge;
 };
 
 type RunWebSocketEvent =
   | NodeCreatedEvent
+  | NodeUpdatedEvent
   | EdgeCreatedEvent;
+
+type ConnectionStatus =
+  | "connecting"
+  | "connected"
+  | "disconnected"
+  | "error";
 
 type UseDagWebSocketReturn = {
   nodes: Node<DagNodeData>[];
   edges: Edge[];
+  connectionStatus: ConnectionStatus;
 };
-
-const NODE_LAYOUT = {
-  horizontalGap: 330,
-  y: 200,
-} as const;
 
 function getWebSocketUrl(runId: string) {
   const apiUrl =
@@ -79,6 +78,73 @@ function getWebSocketUrl(runId: string) {
   return url.toString();
 }
 
+function formatDuration(
+  startTime: string,
+  endTime: string | null,
+): string | undefined {
+  if (!endTime) {
+    return undefined;
+  }
+
+  const duration =
+    new Date(endTime).getTime() -
+    new Date(startTime).getTime();
+
+  if (!Number.isFinite(duration) || duration < 0) {
+    return undefined;
+  }
+
+  if (duration < 1000) {
+    return `${duration}ms`;
+  }
+
+  if (duration < 60_000) {
+    return `${(duration / 1000).toFixed(1)}s`;
+  }
+
+  const minutes = Math.floor(
+    duration / 60_000,
+  );
+
+  const seconds = Math.floor(
+    (duration % 60_000) / 1000,
+  );
+
+  return `${minutes}m ${seconds}s`;
+}
+
+function toFlowNode(
+  node: ExistingGraphNode,
+): Node<DagNodeData> {
+  return {
+    id: node.id,
+    type: "dagNode",
+    position: {
+      x: 0,
+      y: 0,
+    },
+    data: {
+      name: node.name,
+      status: node.status,
+      duration: formatDuration(
+        node.startTime,
+        node.endTime,
+      ),
+    },
+  };
+}
+
+function toFlowEdge(
+  edge: ExistingGraphEdge,
+): Edge {
+  return {
+    id: `${edge.sourceNodeId}-${edge.targetNodeId}`,
+    source: edge.sourceNodeId,
+    target: edge.targetNodeId,
+    type: "straight",
+  };
+}
+
 export function useDagWebSocket(
   runId: string,
 ): UseDagWebSocketReturn {
@@ -87,6 +153,13 @@ export function useDagWebSocket(
   >([]);
 
   const [edges, setEdges] = useState<Edge[]>([]);
+
+  const [
+    connectionStatus,
+    setConnectionStatus,
+  ] = useState<ConnectionStatus>(
+    "disconnected",
+  );
 
   useEffect(() => {
     if (!runId) {
@@ -98,6 +171,7 @@ export function useDagWebSocket(
 
     setNodes([]);
     setEdges([]);
+    setConnectionStatus("connecting");
 
     async function initialize() {
       const apiUrl =
@@ -118,44 +192,20 @@ export function useDagWebSocket(
         const {
           nodes: existingNodes,
           edges: existingEdges,
-        }: GraphResponse = await response.json();
+        }: GraphResponse =
+          await response.json();
 
         if (cancelled) {
           return;
         }
 
-        const flowNodes: Node<DagNodeData>[] =
-          existingNodes.map((node, index) => ({
-            id: node.id,
-            type: "dagNode",
-            position: {
-              x: index * NODE_LAYOUT.horizontalGap,
-              y: NODE_LAYOUT.y,
-            },
-            data: {
-              name: node.name,
-              status: node.status,
-              duration: undefined,
-            },
-          }));
+        setNodes(
+          existingNodes.map(toFlowNode),
+        );
 
-        const flowEdges: Edge[] =
-          existingEdges.map((edge) => ({
-            id: `${edge.sourceNodeId}-${edge.targetNodeId}`,
-            source: edge.sourceNodeId,
-            target: edge.targetNodeId,
-            type: "straight",
-            animated: true,
-          }));
-
-        setNodes(flowNodes);
-        setEdges(flowEdges);
-
-        console.log("Initial graph loaded", {
-          runId,
-          nodes: flowNodes.length,
-          edges: flowEdges.length,
-        });
+        setEdges(
+          existingEdges.map(toFlowEdge),
+        );
       } catch (error) {
         if (!cancelled) {
           console.error(
@@ -169,7 +219,8 @@ export function useDagWebSocket(
         return;
       }
 
-      const wsUrl = getWebSocketUrl(runId);
+      const wsUrl =
+        getWebSocketUrl(runId);
 
       console.log(
         "Connecting to WebSocket:",
@@ -179,6 +230,12 @@ export function useDagWebSocket(
       socket = new WebSocket(wsUrl);
 
       socket.onopen = () => {
+        if (cancelled) {
+          return;
+        }
+
+        setConnectionStatus("connected");
+
         console.log("WebSocket connected", {
           runId,
         });
@@ -191,19 +248,9 @@ export function useDagWebSocket(
 
           switch (message.type) {
             case "node.created": {
-              const node: Node<DagNodeData> = {
-                id: message.node.id,
-                type: "dagNode",
-                position: {
-                  x: 0,
-                  y: NODE_LAYOUT.y,
-                },
-                data: {
-                  name: message.node.name,
-                  status: message.node.status,
-                  duration: undefined,
-                },
-              };
+              const node = toFlowNode(
+                message.node,
+              );
 
               setNodes((currentNodes) => {
                 if (
@@ -215,33 +262,45 @@ export function useDagWebSocket(
                   return currentNodes;
                 }
 
-                const position = {
-                  x:
-                    currentNodes.length *
-                    NODE_LAYOUT.horizontalGap,
-                  y: NODE_LAYOUT.y,
-                };
-
                 return [
                   ...currentNodes,
-                  {
-                    ...node,
-                    position,
-                  },
+                  node,
                 ];
               });
 
               break;
             }
 
+            case "node.updated": {
+              setNodes((currentNodes) =>
+                currentNodes.map((node) =>
+                  node.id === message.node.id
+                    ? {
+                        ...node,
+                        data: {
+                          ...node.data,
+                          status:
+                            message.node.status,
+                          duration:
+                            formatDuration(
+                              message.node
+                                .startTime,
+                              message.node
+                                .endTime,
+                            ),
+                        },
+                      }
+                    : node,
+                ),
+              );
+
+              break;
+            }
+
             case "edge.created": {
-              const edge: Edge = {
-                id: `${message.edge.sourceNodeId}-${message.edge.targetNodeId}`,
-                source: message.edge.sourceNodeId,
-                target: message.edge.targetNodeId,
-                type: "straight",
-                animated: true,
-              };
+              const edge = toFlowEdge(
+                message.edge,
+              );
 
               setEdges((currentEdges) => {
                 if (
@@ -253,14 +312,14 @@ export function useDagWebSocket(
                   return currentEdges;
                 }
 
-                return [...currentEdges, edge];
+                return [
+                  ...currentEdges,
+                  edge,
+                ];
               });
 
               break;
             }
-
-            default:
-              break;
           }
         } catch (error) {
           console.error(
@@ -271,6 +330,10 @@ export function useDagWebSocket(
       };
 
       socket.onerror = () => {
+        if (!cancelled) {
+          setConnectionStatus("error");
+        }
+
         console.error("WebSocket error", {
           runId,
           url: wsUrl,
@@ -278,13 +341,20 @@ export function useDagWebSocket(
       };
 
       socket.onclose = (event) => {
-        console.log("WebSocket disconnected", {
-          runId,
-          url: wsUrl,
-          code: event.code,
-          reason: event.reason,
-          wasClean: event.wasClean,
-        });
+        if (!cancelled) {
+          setConnectionStatus("disconnected");
+        }
+
+        console.log(
+          "WebSocket disconnected",
+          {
+            runId,
+            url: wsUrl,
+            code: event.code,
+            reason: event.reason,
+            wasClean: event.wasClean,
+          },
+        );
       };
     }
 
@@ -292,6 +362,7 @@ export function useDagWebSocket(
 
     return () => {
       cancelled = true;
+
       socket?.close();
     };
   }, [runId]);
@@ -299,5 +370,6 @@ export function useDagWebSocket(
   return {
     nodes,
     edges,
+    connectionStatus,
   };
 }
