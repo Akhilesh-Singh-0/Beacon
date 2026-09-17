@@ -14,11 +14,18 @@ import DagNode, {
   type DagNodeData,
 } from "./dag-node";
 
+type DagCanvasProps = {
+  nodes: Node<DagNodeData>[];
+  edges: Edge[];
+};
+
 const NODE_TYPES = {
   dagNode: DagNode,
 };
 
 const CANVAS_CONFIG = {
+  surface: "#0a0a0a",
+
   background: {
     color: "#27272a",
     gap: 24,
@@ -30,62 +37,7 @@ const CANVAS_CONFIG = {
     width: 2,
     glow: "drop-shadow(0 0 5px rgba(59, 130, 246, 0.55))",
   },
-
-  surface: "#0a0a0a",
 } as const;
-
-const nodes: Node<DagNodeData>[] = [
-  {
-    id: "node-1",
-    type: "dagNode",
-    position: { x: 40, y: 200 },
-    data: {
-      name: "Agent",
-      status: "SUCCESS",
-      duration: "1.2s",
-    },
-  },
-
-  {
-    id: "node-2",
-    type: "dagNode",
-    position: { x: 370, y: 200 },
-    data: {
-      name: "LLM Call",
-      status: "RUNNING",
-      duration: "3.4s",
-    },
-  },
-
-  {
-    id: "node-3",
-    type: "dagNode",
-    position: { x: 700, y: 200 },
-    data: {
-      name: "Tool Call",
-      status: "STUCK",
-      duration: "5m+",
-    },
-  },
-];
-
-const edges: Edge[] = [
-  {
-    id: "edge-1",
-    source: "node-1",
-    target: "node-2",
-    type: "straight",
-    animated: true,
-  },
-
-  {
-    id: "edge-2",
-    source: "node-2",
-    target: "node-3",
-    type: "straight",
-    animated: true,
-  },
-];
 
 const EDGE_STYLE = {
   stroke: CANVAS_CONFIG.edge.color,
@@ -93,12 +45,16 @@ const EDGE_STYLE = {
   filter: CANVAS_CONFIG.edge.glow,
 };
 
-export default function DagCanvas() {
+export default function DagCanvas({
+  nodes,
+  edges,
+}: DagCanvasProps) {
   return (
     <div
       className="h-full w-full overflow-hidden"
       style={{
-        backgroundColor: CANVAS_CONFIG.surface,
+        backgroundColor:
+          CANVAS_CONFIG.surface,
       }}
     >
       <ReactFlow

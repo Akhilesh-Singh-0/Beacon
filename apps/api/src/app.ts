@@ -7,6 +7,7 @@ import prismaPlugin from "./plugins/prisma";
 import { ingestionRoutes } from "./modules/ingestion/ingestion.route";
 import { graphRoutes } from "./modules/runs/runs.route";
 import websocketPlugin from "./websocket/websocket.server";
+import cors from "@fastify/cors"
 
 const app = Fastify({
   logger: {
@@ -14,6 +15,9 @@ const app = Fastify({
   },
 });
 
+app.register(cors, {
+  origin: "http://localhost:3000",
+});
 app.register(healthPlugin);
 app.register(errorHandler);
 app.register(prismaPlugin);
