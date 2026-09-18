@@ -1,9 +1,11 @@
-import DagCanvas from "@/components/dag/dag-canvas";
+import LandingNav from "@/components/landing/landing-nav";
+import LandingHero from "@/components/landing/landing-hero";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <main className="h-screen w-full">
-      <DagCanvas />
+    <main className="min-h-screen overflow-x-hidden bg-[#070A0F] text-zinc-100">
+      <LandingNav />
+      <LandingHero />
     </main>
   );
 }
