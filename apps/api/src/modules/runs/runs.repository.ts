@@ -15,3 +15,19 @@ export async function findEdges(runId: string) {
         }
     })
 }
+
+export async function findRuns(workspaceId: string) {
+    return await prisma.run.findMany({
+        where:{
+            workspaceId: workspaceId
+        },
+        include:{
+            _count: {
+                select: {nodes: true}
+            },  
+        },
+        orderBy: {
+            startedAt: "desc"
+        }
+    })
+}
