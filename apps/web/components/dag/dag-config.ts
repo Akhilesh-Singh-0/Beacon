@@ -17,81 +17,82 @@ export type DagEdgeData = {
 };
 
 export const DAG_LAYOUT = {
-  nodeWidth: 250,
-  nodeHeight: 96,
-  rankGap: 96,
-  rowGap: 52,
+  nodeWidth: 210,
+  nodeHeight: 86,
+  rankGap: 72,
+  rowGap: 28,
 } as const;
 
 export const DAG_CANVAS = {
-  surface: "#0a0a0a",
+  surface: "#08111A",
 
   background: {
-    color: "#1a1a1f",
-    gap: 24,
-    size: 1,
+    color:
+      "rgba(96,165,250,0.12)",
+    gap: 36,
+    size: 1.15,
   },
 
   zoom: {
-    min: 0.3,
-    max: 2.2,
-    fitPadding: 0.12,
+    min: 0.35,
+    max: 1.9,
   },
 } as const;
 
 export const DAG_NODE = {
-  width: 250,
-  height: 96,
+  width: 210,
+  height: 86,
 
-  paddingX: 24,
-  paddingY: 18,
+  paddingX: 20,
+  paddingY: 16,
 
-  background: "#0d0d10",
+  background: "#101A24",
 
-  borderRadius: 14,
+  borderRadius: 13,
 
   baseBorder:
-    "rgba(255,255,255,0.08)",
+    "rgba(148,163,184,0.16)",
 
   selectedBorder:
-    "rgba(167,139,250,0.88)",
+    "rgba(96,165,250,0.92)",
 
   shadow:
-    "0 12px 32px rgba(0,0,0,0.28)",
+    "0 18px 42px rgba(0,0,0,0.42)",
 
   selectedShadow:
-    "0 0 28px rgba(139,92,246,0.13)",
+    "0 0 32px rgba(96,165,250,0.18), 0 18px 42px rgba(0,0,0,0.42)",
 
   topHighlight:
-    "linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)",
+    "linear-gradient(90deg, transparent, rgba(255,255,255,0.13), transparent)",
 
   bottomGlow:
-    "linear-gradient(90deg, transparent, rgba(139,92,246,0.11), transparent)",
+    "linear-gradient(90deg, transparent, rgba(96,165,250,0.12), transparent)",
 } as const;
 
 export const DAG_EDGE = {
-  color: "#8B7CFF",
-  activeColor: "#B19CFF",
+  color: "#6675A8",
+  activeColor: "#78A5F5",
 
-  baseWidth: 1.35,
-  activeWidth: 1.8,
+  baseWidth: 2.2,
+  activeWidth: 2.8,
 
   baseOpacity: 0.82,
   activeOpacity: 1,
 
-  arrowSize: 6.2,
+  arrowSize: 5.5,
 
-  branchLength: 42,
-  borderRadius: 14,
-  offset: 20,
+  branchLength: 30,
+  borderRadius: 12,
+  offset: 16,
 
-  animationDuration: "1.3s",
+  animationDuration:
+    "2.15s",
 
   baseGlow:
-    "drop-shadow(0 0 3px rgba(139,124,255,0.18))",
+    "drop-shadow(0 0 3px rgba(92,102,146,0.20))",
 
   activeGlow:
-    "drop-shadow(0 0 6px rgba(177,156,255,0.52))",
+    "drop-shadow(0 0 7px rgba(96,165,250,0.45))",
 } as const;
 
 type StatusVisualConfig = {
@@ -115,106 +116,127 @@ export const DAG_STATUS_CONFIG: Record<
 > = {
   PENDING: {
     label: "Pending",
-    indicator: "bg-zinc-500",
+
+    indicator:
+      "bg-zinc-400",
 
     border:
-      "rgba(113,113,122,0.45)",
+      "rgba(148,163,184,0.42)",
 
     surface:
-      "radial-gradient(circle at 15% 12%, rgba(113,113,122,0.08), transparent 48%), linear-gradient(135deg, rgba(255,255,255,0.018), rgba(13,13,16,0.98) 62%)",
+      "linear-gradient(135deg, rgba(21,32,44,0.98), rgba(12,19,27,0.99))",
 
     glow:
-      "shadow-[0_12px_32px_rgba(0,0,0,0.28)]",
+      "shadow-[0_16px_38px_rgba(0,0,0,0.34)]",
 
     edge: {
       color: DAG_EDGE.color,
-      width: DAG_EDGE.baseWidth,
+      width:
+        DAG_EDGE.baseWidth,
       animated: false,
-      glow: DAG_EDGE.baseGlow,
+      glow:
+        DAG_EDGE.baseGlow,
     },
   },
 
   RUNNING: {
     label: "Running",
-    indicator: "bg-blue-400",
+
+    indicator:
+      "bg-blue-400",
 
     border:
-      "rgba(96,165,250,0.62)",
+      "rgba(96,165,250,0.72)",
 
     surface:
-      "radial-gradient(circle at 15% 12%, rgba(59,130,246,0.14), transparent 52%), linear-gradient(135deg, rgba(255,255,255,0.02), rgba(13,13,16,0.98) 62%)",
+      "linear-gradient(135deg, rgba(17,32,49,0.99), rgba(10,18,27,0.99))",
 
     glow:
-      "shadow-[0_0_28px_rgba(59,130,246,0.10)]",
+      "shadow-[0_0_28px_rgba(59,130,246,0.12),0_16px_38px_rgba(0,0,0,0.34)]",
 
     edge: {
-      color: DAG_EDGE.activeColor,
-      width: DAG_EDGE.activeWidth,
+      color:
+        DAG_EDGE.activeColor,
+      width:
+        DAG_EDGE.activeWidth,
       animated: true,
-      glow: DAG_EDGE.activeGlow,
+      glow:
+        DAG_EDGE.activeGlow,
     },
   },
 
   SUCCESS: {
     label: "Success",
-    indicator: "bg-emerald-400",
+
+    indicator:
+      "bg-emerald-400",
 
     border:
-      "rgba(52,211,153,0.54)",
+      "rgba(52,211,153,0.58)",
 
     surface:
-      "radial-gradient(circle at 15% 12%, rgba(16,185,129,0.12), transparent 52%), linear-gradient(135deg, rgba(255,255,255,0.018), rgba(13,13,16,0.98) 62%)",
+      "linear-gradient(135deg, rgba(14,31,34,0.99), rgba(10,19,25,0.99))",
 
     glow:
-      "shadow-[0_12px_32px_rgba(0,0,0,0.28)]",
+      "shadow-[0_0_22px_rgba(16,185,129,0.045),0_16px_38px_rgba(0,0,0,0.36)]",
 
     edge: {
       color: DAG_EDGE.color,
-      width: DAG_EDGE.baseWidth,
+      width:
+        DAG_EDGE.baseWidth,
       animated: false,
-      glow: DAG_EDGE.baseGlow,
+      glow:
+        DAG_EDGE.baseGlow,
     },
   },
 
   ERROR: {
     label: "Error",
-    indicator: "bg-red-400",
+
+    indicator:
+      "bg-red-400",
 
     border:
-      "rgba(248,113,113,0.68)",
+      "rgba(248,113,113,0.72)",
 
     surface:
-      "radial-gradient(circle at 15% 12%, rgba(239,68,68,0.13), transparent 52%), linear-gradient(135deg, rgba(255,255,255,0.018), rgba(13,13,16,0.98) 62%)",
+      "linear-gradient(135deg, rgba(39,24,30,0.99), rgba(15,16,22,0.99))",
 
     glow:
-      "shadow-[0_0_28px_rgba(239,68,68,0.10)]",
+      "shadow-[0_0_28px_rgba(239,68,68,0.10),0_16px_38px_rgba(0,0,0,0.36)]",
 
     edge: {
       color: DAG_EDGE.color,
-      width: DAG_EDGE.baseWidth,
+      width:
+        DAG_EDGE.baseWidth,
       animated: false,
-      glow: DAG_EDGE.baseGlow,
+      glow:
+        DAG_EDGE.baseGlow,
     },
   },
 
   STUCK: {
     label: "Stuck",
-    indicator: "bg-amber-400",
+
+    indicator:
+      "bg-amber-400",
 
     border:
-      "rgba(251,191,36,0.68)",
+      "rgba(251,191,36,0.72)",
 
     surface:
-      "radial-gradient(circle at 15% 12%, rgba(245,158,11,0.13), transparent 52%), linear-gradient(135deg, rgba(255,255,255,0.018), rgba(13,13,16,0.98) 62%)",
+      "linear-gradient(135deg, rgba(38,31,20,0.99), rgba(17,17,21,0.99))",
 
     glow:
-      "shadow-[0_0_28px_rgba(245,158,11,0.10)]",
+      "shadow-[0_0_28px_rgba(245,158,11,0.09),0_16px_38px_rgba(0,0,0,0.36)]",
 
     edge: {
       color: DAG_EDGE.color,
-      width: DAG_EDGE.baseWidth,
+      width:
+        DAG_EDGE.baseWidth,
       animated: false,
-      glow: DAG_EDGE.baseGlow,
+      glow:
+        DAG_EDGE.baseGlow,
     },
   },
 };

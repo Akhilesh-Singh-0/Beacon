@@ -17,8 +17,15 @@ export function layoutDag(
     nodes.map((node) => node.id),
   );
 
-  const indegree = new Map<string, number>();
-  const outgoing = new Map<string, string[]>();
+  const indegree = new Map<
+    string,
+    number
+  >();
+
+  const outgoing = new Map<
+    string,
+    string[]
+  >();
 
   for (const node of nodes) {
     indegree.set(node.id, 0);
@@ -33,20 +40,27 @@ export function layoutDag(
       continue;
     }
 
-    outgoing.get(edge.source)?.push(edge.target);
+    outgoing
+      .get(edge.source)
+      ?.push(edge.target);
 
     indegree.set(
       edge.target,
-      (indegree.get(edge.target) ?? 0) + 1,
+      (indegree.get(edge.target) ?? 0) +
+        1,
     );
   }
 
-  const depth = new Map<string, number>();
+  const depth = new Map<
+    string,
+    number
+  >();
 
   const queue = nodes
     .filter(
       (node) =>
-        (indegree.get(node.id) ?? 0) === 0,
+        (indegree.get(node.id) ?? 0) ===
+        0,
     )
     .map((node) => node.id);
 
@@ -57,7 +71,9 @@ export function layoutDag(
   let cursor = 0;
 
   while (cursor < queue.length) {
-    const currentId = queue[cursor];
+    const currentId =
+      queue[cursor];
+
     cursor += 1;
 
     const currentDepth =
@@ -65,7 +81,8 @@ export function layoutDag(
 
     for (const childId of
       outgoing.get(currentId) ?? []) {
-      const nextDepth = currentDepth + 1;
+      const nextDepth =
+        currentDepth + 1;
 
       depth.set(
         childId,
@@ -78,7 +95,10 @@ export function layoutDag(
       const nextIndegree =
         (indegree.get(childId) ?? 0) - 1;
 
-      indegree.set(childId, nextIndegree);
+      indegree.set(
+        childId,
+        nextIndegree,
+      );
 
       if (nextIndegree === 0) {
         queue.push(childId);
@@ -86,20 +106,29 @@ export function layoutDag(
     }
   }
 
-  const unresolvedNodes = nodes.filter(
-    (node) => !depth.has(node.id),
-  );
+  const unresolvedNodes =
+    nodes.filter(
+      (node) =>
+        !depth.has(node.id),
+    );
 
-  if (unresolvedNodes.length > 0) {
+  if (
+    unresolvedNodes.length > 0
+  ) {
     const fallbackDepth =
-      Math.max(...depth.values(), 0) + 1;
+      Math.max(
+        ...depth.values(),
+        0,
+      ) + 1;
 
-    unresolvedNodes.forEach((node, index) => {
-      depth.set(
-        node.id,
-        fallbackDepth + index,
-      );
-    });
+    unresolvedNodes.forEach(
+      (node, index) => {
+        depth.set(
+          node.id,
+          fallbackDepth + index,
+        );
+      },
+    );
   }
 
   const layers = new Map<
@@ -111,7 +140,8 @@ export function layoutDag(
     const nodeDepth =
       depth.get(node.id) ?? 0;
 
-    const layer = layers.get(nodeDepth);
+    const layer =
+      layers.get(nodeDepth);
 
     if (layer) {
       layer.push(node);
@@ -122,38 +152,45 @@ export function layoutDag(
 
   const result: Node<DagNodeData>[] = [];
 
-  for (const [layerIndex, layerNodes] of layers) {
-    const sortedNodes = [...layerNodes].sort(
-      (a, b) =>
-        (a.position?.y ?? 0) -
-        (b.position?.y ?? 0),
-    );
+  for (const [
+    layerIndex,
+    layerNodes,
+  ] of layers) {
+    const sortedNodes =
+      [...layerNodes].sort(
+        (a, b) =>
+          (a.position?.y ?? 0) -
+          (b.position?.y ?? 0),
+      );
 
     const totalHeight =
       (sortedNodes.length - 1) *
       (DAG_LAYOUT.nodeHeight +
         DAG_LAYOUT.rowGap);
 
-    const startY = -totalHeight / 2;
+    const startY =
+      -totalHeight / 2;
 
-    sortedNodes.forEach((node, index) => {
-      result.push({
-        ...node,
+    sortedNodes.forEach(
+      (node, index) => {
+        result.push({
+          ...node,
 
-        position: {
-          x:
-            layerIndex *
-            (DAG_LAYOUT.nodeWidth +
-              DAG_LAYOUT.rankGap),
+          position: {
+            x:
+              layerIndex *
+              (DAG_LAYOUT.nodeWidth +
+                DAG_LAYOUT.rankGap),
 
-          y:
-            startY +
-            index *
-              (DAG_LAYOUT.nodeHeight +
-                DAG_LAYOUT.rowGap),
-        },
-      });
-    });
+            y:
+              startY +
+              index *
+                (DAG_LAYOUT.nodeHeight +
+                  DAG_LAYOUT.rowGap),
+          },
+        });
+      },
+    );
   }
 
   return result;

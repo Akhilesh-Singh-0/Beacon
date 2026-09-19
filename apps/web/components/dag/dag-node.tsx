@@ -26,17 +26,63 @@ const NODE_STYLES = {
     "truncate text-[14px] font-semibold leading-5 tracking-[-0.01em] text-zinc-100",
 
   statusRow:
-    "mt-2.5 flex items-center gap-2",
+    "mt-2 flex items-center gap-2",
 
   indicator:
     "h-2 w-2 shrink-0 rounded-full",
 
   statusText:
-    "text-[12px] font-medium leading-4 text-zinc-400",
+    "text-[12px] font-medium leading-4 text-zinc-300",
 
   duration:
-    "shrink-0 font-mono text-[11px] font-medium leading-4 tabular-nums text-zinc-500",
+    "shrink-0 font-mono text-[11px] font-medium leading-4 tabular-nums text-zinc-400",
 } as const;
+
+function getStatusGlow(
+  status: DagNodeData["status"],
+) {
+  switch (status) {
+    case "RUNNING":
+      return {
+        background:
+          "rgba(96,165,250,0.15)",
+        dot:
+          "0 0 10px rgba(96,165,250,0.72)",
+      };
+
+    case "ERROR":
+      return {
+        background:
+          "rgba(248,113,113,0.12)",
+        dot:
+          "0 0 9px rgba(248,113,113,0.65)",
+      };
+
+    case "STUCK":
+      return {
+        background:
+          "rgba(251,191,36,0.11)",
+        dot:
+          "0 0 9px rgba(251,191,36,0.58)",
+      };
+
+    case "SUCCESS":
+      return {
+        background:
+          "rgba(16,185,129,0.065)",
+        dot:
+          "0 0 7px rgba(52,211,153,0.45)",
+      };
+
+    default:
+      return {
+        background:
+          "rgba(148,163,184,0.035)",
+        dot:
+          "0 0 5px rgba(148,163,184,0.22)",
+      };
+  }
+}
 
 export default function DagNode({
   data,
@@ -45,26 +91,38 @@ export default function DagNode({
   const config =
     DAG_STATUS_CONFIG[data.status];
 
-  const isActive =
-    data.status === "RUNNING" ||
-    data.status === "STUCK";
+  const statusGlow =
+    getStatusGlow(data.status);
+
+  const isRunning =
+    data.status === "RUNNING";
 
   return (
     <div
-      className={[
-        "group relative",
-        config.glow,
-      ].join(" ")}
+      className="relative"
       style={{
         width: DAG_NODE.width,
         height: DAG_NODE.height,
       }}
     >
       <div
-        className="absolute inset-0 overflow-hidden transition-all duration-200"
+        aria-hidden="true"
+        className="pointer-events-none absolute -inset-3 rounded-[18px] blur-2xl"
         style={{
-          borderRadius: DAG_NODE.borderRadius,
-          background: config.surface,
+          background:
+            statusGlow.background,
+          opacity: selected ? 1 : 0.8,
+        }}
+      />
+
+      <div
+        className="absolute inset-0 overflow-hidden"
+        style={{
+          borderRadius:
+            DAG_NODE.borderRadius,
+
+          background:
+            config.surface,
 
           border: `1px solid ${
             selected
@@ -88,7 +146,16 @@ export default function DagNode({
 
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-10 bottom-0 h-px"
+          className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full blur-3xl"
+          style={{
+            background:
+              statusGlow.background,
+          }}
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-8 bottom-0 h-px"
           style={{
             background:
               DAG_NODE.bottomGlow,
@@ -96,7 +163,7 @@ export default function DagNode({
         />
 
         <div
-          className="relative flex h-full w-full items-center justify-between gap-6"
+          className="flex h-full w-full items-center justify-between gap-4"
           style={{
             padding: `${DAG_NODE.paddingY}px ${DAG_NODE.paddingX}px`,
           }}
@@ -116,10 +183,14 @@ export default function DagNode({
                 className={[
                   NODE_STYLES.indicator,
                   config.indicator,
-                  isActive
+                  isRunning
                     ? "animate-pulse"
                     : "",
                 ].join(" ")}
+                style={{
+                  boxShadow:
+                    statusGlow.dot,
+                }}
               />
 
               <span
@@ -147,13 +218,17 @@ export default function DagNode({
       <Handle
         type="target"
         position={Position.Left}
-        className={NODE_STYLES.handle}
+        className={
+          NODE_STYLES.handle
+        }
       />
 
       <Handle
         type="source"
         position={Position.Right}
-        className={NODE_STYLES.handle}
+        className={
+          NODE_STYLES.handle
+        }
       />
     </div>
   );

@@ -2,10 +2,10 @@
 
 import {
   BaseEdge,
-  getSmoothStepPath,
+  getBezierPath,
+  Position,
   type Edge,
   type EdgeProps,
-  Position,
 } from "@xyflow/react";
 
 import {
@@ -16,60 +16,99 @@ import {
 
 type DagEdge = Edge<DagEdgeData, "dagEdge">;
 
+function FlowParticle({
+  path,
+  color,
+  duration,
+  begin,
+  radius,
+}: {
+  path: string;
+  color: string;
+  duration: string;
+  begin: string;
+  radius: number;
+}) {
+  return (
+    <circle
+      r={radius}
+      fill={color}
+      opacity="0"
+      pointerEvents="none"
+      style={{
+        filter: `drop-shadow(0 0 5px ${color})`,
+      }}
+    >
+      <animateMotion
+        path={path}
+        dur={duration}
+        begin={begin}
+        repeatCount="indefinite"
+      />
+
+      <animate
+        attributeName="opacity"
+        values="0;0.95;0"
+        dur={duration}
+        begin={begin}
+        repeatCount="indefinite"
+      />
+
+      <animate
+        attributeName="r"
+        values={`${radius * 0.6};${radius};${radius * 0.6}`}
+        dur={duration}
+        begin={begin}
+        repeatCount="indefinite"
+      />
+    </circle>
+  );
+}
+
 function ArrowHead({
   color,
   targetX,
   targetY,
+  targetPosition,
   size,
-  animated,
-  animationDuration,
   opacity,
 }: {
   color: string;
   targetX: number;
   targetY: number;
+  targetPosition: Position;
   size: number;
-  animated: boolean;
-  animationDuration: string;
   opacity: number;
 }) {
+  let rotation = 0;
+
+  if (targetPosition === Position.Left) {
+    rotation = 180;
+  }
+
+  if (targetPosition === Position.Top) {
+    rotation = -90;
+  }
+
+  if (targetPosition === Position.Bottom) {
+    rotation = 90;
+  }
+
   const points = [
     "0,0",
     `${-size},-${size * 0.46}`,
-    `${-size * 0.72},0`,
+    `${-size * 0.7},0`,
     `${-size},${size * 0.46}`,
   ].join(" ");
 
   return (
-    <g
-      transform={`translate(${targetX} ${targetY})`}
+    <polygon
+      points={points}
+      fill={color}
+      opacity={opacity}
+      transform={`translate(${targetX} ${targetY}) rotate(${rotation})`}
       pointerEvents="none"
-    >
-      <polygon
-        points={points}
-        fill={color}
-        opacity={opacity}
-      >
-        {animated && (
-          <>
-            <animate
-              attributeName="opacity"
-              values="0.45;1;0.45"
-              dur={animationDuration}
-              repeatCount="indefinite"
-            />
-
-            <animateTransform
-              attributeName="transform"
-              type="scale"
-              values="0.84;1;0.84"
-              dur={animationDuration}
-              repeatCount="indefinite"
-            />
-          </>
-        )}
-      </polygon>
-    </g>
+    />
   );
 }
 
@@ -91,129 +130,137 @@ export default function DagEdge({
   const config =
     DAG_STATUS_CONFIG[status];
 
-  const isAnimated =
-    config.edge.animated;
-
-  const branchX =
-    sourceX + DAG_EDGE.branchLength;
+  const isRunning =
+    status === "RUNNING";
 
   const [edgePath] =
-    getSmoothStepPath({
-      sourceX: isBranch
-        ? branchX
-        : sourceX,
-
+    getBezierPath({
+      sourceX,
       sourceY,
-
-      sourcePosition: isBranch
-        ? Position.Right
-        : sourcePosition,
-
+      sourcePosition,
       targetX,
       targetY,
       targetPosition,
-
-      borderRadius:
-        DAG_EDGE.borderRadius,
-
-      offset:
-        DAG_EDGE.offset,
+      curvature: isBranch
+        ? 0.34
+        : 0.18,
     });
 
-  const trunkPath = isBranch
-    ? `M ${sourceX} ${sourceY} L ${branchX} ${sourceY}`
-    : null;
+  const edgeColor =
+    isRunning
+      ? DAG_EDGE.activeColor
+      : DAG_EDGE.color;
 
-  const opacity = isAnimated
-    ? DAG_EDGE.activeOpacity
-    : DAG_EDGE.baseOpacity;
+  const edgeWidth =
+    isRunning
+      ? DAG_EDGE.activeWidth
+      : DAG_EDGE.baseWidth;
+
+  const edgeOpacity =
+    isRunning
+      ? DAG_EDGE.activeOpacity
+      : DAG_EDGE.baseOpacity;
 
   return (
     <g
-      pointerEvents="none"
       className="beacon-edge"
+      pointerEvents="none"
     >
-
-      {trunkPath && (
-        <path
-          d={trunkPath}
-          fill="none"
-          stroke={DAG_EDGE.color}
-          strokeWidth={DAG_EDGE.baseWidth}
-          strokeLinecap="round"
-          opacity={0.82}
-          vectorEffect="non-scaling-stroke"
-        />
-      )}
-
       <BaseEdge
         path={edgePath}
         style={{
-          stroke: config.edge.color,
+          stroke: edgeColor,
           strokeWidth:
-            config.edge.width + 2.5,
-          strokeLinecap: "round",
-          opacity: isAnimated
-            ? 0.09
-            : 0.045,
-          filter: config.edge.glow,
+            edgeWidth + 7,
+          strokeLinecap:
+            "round",
+          opacity: isRunning
+            ? 0.16
+            : 0.07,
+          filter:
+            "blur(3px)",
+          vectorEffect:
+            "non-scaling-stroke",
         }}
       />
 
       <BaseEdge
         path={edgePath}
         style={{
-          stroke: config.edge.color,
+          stroke: edgeColor,
           strokeWidth:
-            config.edge.width,
-          strokeLinecap: "round",
-          opacity,
+            edgeWidth + 2,
+          strokeLinecap:
+            "round",
+          opacity: isRunning
+            ? 0.22
+            : 0.12,
+          filter:
+            config.edge.glow,
+          vectorEffect:
+            "non-scaling-stroke",
         }}
       />
 
-      {isAnimated && (
-        <circle
-          r="2"
-          fill={config.edge.color}
-        >
-          <animateMotion
+      <BaseEdge
+        path={edgePath}
+        style={{
+          stroke: edgeColor,
+          strokeWidth:
+            edgeWidth,
+          strokeLinecap:
+            "round",
+          opacity:
+            edgeOpacity,
+          vectorEffect:
+            "non-scaling-stroke",
+        }}
+      />
+
+      <FlowParticle
+        path={edgePath}
+        color={
+          isRunning
+            ? "#A8C7FF"
+            : "#8B9BFF"
+        }
+        duration={
+          isRunning
+            ? "2.1s"
+            : "2.8s"
+        }
+        begin="-0.7s"
+        radius={
+          isRunning ? 2.4 : 2
+        }
+      />
+
+      {isRunning &&
+        isBranch && (
+          <FlowParticle
             path={edgePath}
-            dur={
-              DAG_EDGE.animationDuration
-            }
-            repeatCount="indefinite"
+            color="#C4B5FD"
+            duration="2.5s"
+            begin="-1.5s"
+            radius={1.7}
           />
-
-          <animate
-            attributeName="opacity"
-            values="0;1;0"
-            dur={
-              DAG_EDGE.animationDuration
-            }
-            repeatCount="indefinite"
-          />
-
-          <animate
-            attributeName="r"
-            values="1.4;2.4;1.4"
-            dur={
-              DAG_EDGE.animationDuration
-            }
-            repeatCount="indefinite"
-          />
-        </circle>
-      )}
+        )}
 
       <ArrowHead
-        color={config.edge.color}
+        color={edgeColor}
         targetX={targetX}
         targetY={targetY}
-        size={DAG_EDGE.arrowSize}
-        animated={isAnimated}
-        animationDuration={
-          DAG_EDGE.animationDuration
+        targetPosition={
+          targetPosition
         }
-        opacity={opacity}
+        size={
+          DAG_EDGE.arrowSize
+        }
+        opacity={
+          isRunning
+            ? 0.9
+            : 0.55
+        }
       />
     </g>
   );

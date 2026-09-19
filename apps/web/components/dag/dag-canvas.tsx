@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 
 import {
-  Background,
   Controls,
   ReactFlow,
   type Edge,
@@ -94,7 +93,6 @@ export default function DagCanvas({
     () =>
       positionedNodes.map((node) => ({
         ...node,
-
         selected:
           node.id === selectedNodeId,
       })),
@@ -163,60 +161,16 @@ export default function DagCanvas({
           DAG_CANVAS.surface,
 
         backgroundImage:
-          "radial-gradient(circle at 50% 38%, rgba(124,58,237,0.018), transparent 52%)",
+          "radial-gradient(ellipse 58% 78% at 50% 50%, rgba(37,99,235,0.15) 0%, rgba(37,99,235,0.065) 32%, transparent 72%), radial-gradient(ellipse 34% 52% at 70% 56%, rgba(124,58,237,0.04) 0%, transparent 72%), linear-gradient(rgba(96,165,250,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(96,165,250,0.035) 1px, transparent 1px)",
+
+        backgroundSize:
+          "100% 100%, 100% 100%, 36px 36px, 36px 36px",
       }}
     >
-      <ReactFlow
-        nodes={graphNodes}
-        edges={graphEdges}
-        nodeTypes={NODE_TYPES}
-        edgeTypes={EDGE_TYPES}
-        defaultEdgeOptions={{
-          type: "dagEdge",
-        }}
-        fitView
-        fitViewOptions={{
-          padding:
-            DAG_CANVAS.zoom.fitPadding,
-        }}
-        colorMode="dark"
-        minZoom={DAG_CANVAS.zoom.min}
-        maxZoom={DAG_CANVAS.zoom.max}
-        nodesDraggable={false}
-        nodesConnectable={false}
-        selectionOnDrag={false}
-        onNodeClick={(_, node) => {
-          setSelectedNodeId(node.id);
-        }}
-        onPaneClick={() => {
-          setSelectedNodeId(null);
-        }}
-        proOptions={{
-          hideAttribution: true,
-        }}
-      >
-        <Background
-          color={
-            DAG_CANVAS.background.color
-          }
-          gap={
-            DAG_CANVAS.background.gap
-          }
-          size={
-            DAG_CANVAS.background.size
-          }
-        />
-
-        <Controls
-          position="bottom-left"
-          showInteractive={false}
-        />
-      </ReactFlow>
-
-      {nodes.length === 0 && (
-        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
-          <div className="text-center">
-            <div className="mx-auto mb-3 h-1.5 w-1.5 animate-pulse rounded-full bg-violet-400 shadow-[0_0_12px_rgba(167,139,250,0.6)]" />
+      {nodes.length === 0 ? (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="rounded-2xl border border-white/[0.06] bg-[#0A0F15]/80 px-8 py-7 text-center backdrop-blur-md">
+            <div className="mx-auto mb-3 h-1.5 w-1.5 animate-pulse rounded-full bg-blue-400" />
 
             <p className="text-sm font-medium text-zinc-300">
               Waiting for spans
@@ -227,6 +181,56 @@ export default function DagCanvas({
             </p>
           </div>
         </div>
+      ) : (
+        <ReactFlow
+          className="!bg-transparent"
+          style={{
+            background: "transparent",
+          }}
+          nodes={graphNodes}
+          edges={graphEdges}
+          nodeTypes={NODE_TYPES}
+          edgeTypes={EDGE_TYPES}
+          defaultEdgeOptions={{
+            type: "dagEdge",
+          }}
+          fitView
+          fitViewOptions={{
+            padding: 0.12,
+            minZoom: 0.55,
+            maxZoom: 1.15,
+            duration: 0,
+          }}
+          colorMode="dark"
+          minZoom={
+            DAG_CANVAS.zoom.min
+          }
+          maxZoom={
+            DAG_CANVAS.zoom.max
+          }
+          nodesDraggable={false}
+          nodesConnectable={false}
+          selectionOnDrag={false}
+          onNodeClick={(_, node) => {
+            setSelectedNodeId(
+              node.id,
+            );
+          }}
+          onPaneClick={() => {
+            setSelectedNodeId(
+              null,
+            );
+          }}
+          proOptions={{
+            hideAttribution: true,
+          }}
+        >
+          <Controls
+            position="bottom-left"
+            showInteractive={false}
+            className="!bottom-5 !left-5 !overflow-hidden !rounded-xl !border !border-white/[0.08] !bg-[#0B1118]/85 !shadow-[0_14px_36px_rgba(0,0,0,0.34)] !backdrop-blur-md [&>button]:!border-white/[0.06] [&>button]:!bg-transparent [&>button]:!fill-zinc-400 [&>button:hover]:!bg-white/[0.04] [&>button:hover]:!fill-zinc-200"
+          />
+        </ReactFlow>
       )}
     </div>
   );
