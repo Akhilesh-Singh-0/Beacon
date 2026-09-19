@@ -1,9 +1,15 @@
+import Image from "next/image";
 import Link from "next/link";
+
+import beaconIcon from "@/app/beacon-icon.svg";
 
 type Run = {
   id: string;
   traceId: string;
-  status: "RUNNING" | "COMPLETED" | "FAILED";
+  status:
+    | "RUNNING"
+    | "COMPLETED"
+    | "FAILED";
   startedAt: string;
   completedAt: string | null;
   _count: {
@@ -11,87 +17,194 @@ type Run = {
   };
 };
 
-const STATUS_STYLES = {
-  RUNNING: {
-    label: "Running",
-    dot: "bg-blue-400",
-    text: "text-blue-300",
-    bg: "bg-blue-400/[0.08]",
-    border: "border-blue-400/[0.20]",
-  },
+type RunsResponse = {
+  runs: Run[];
+};
 
-  COMPLETED: {
-    label: "Completed",
-    dot: "bg-emerald-400",
-    text: "text-emerald-300",
-    bg: "bg-emerald-400/[0.08]",
-    border: "border-emerald-400/[0.20]",
-  },
+const API_URL =
+  process.env.BEACON_API_URL ??
+  "http://localhost:3001";
 
-  FAILED: {
-    label: "Failed",
-    dot: "bg-red-400",
-    text: "text-red-300",
-    bg: "bg-red-400/[0.09]",
-    border: "border-red-400/[0.22]",
-  },
-} as const;
-
-function formatStartedAt(value: string) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
-}
+const API_KEY =
+  process.env.BEACON_API_KEY;
 
 async function getRuns(): Promise<Run[]> {
-  const apiUrl = process.env.BEACON_API_URL;
-  const apiKey = process.env.BEACON_API_KEY;
-
-  if (!apiUrl) {
-    throw new Error("BEACON_API_URL is not configured");
-  }
-
-  if (!apiKey) {
-    throw new Error("BEACON_API_KEY is not configured");
-  }
-
-  const response = await fetch(`${apiUrl}/runs`, {
-    headers: {
-      "x-api-key": apiKey,
-    },
-    cache: "no-store",
-  });
-
-  if (!response.ok) {
+  if (!API_KEY) {
     throw new Error(
-      `Failed to fetch runs: ${response.status} ${response.statusText}`,
+      "BEACON_API_KEY is not configured.",
     );
   }
 
-  const data: { runs: Run[] } = await response.json();
+  const response = await fetch(
+    `${API_URL}/runs`,
+    {
+      headers: {
+        "x-api-key": API_KEY,
+      },
+      cache: "no-store",
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch runs: ${response.status}`,
+    );
+  }
+
+  const data: RunsResponse =
+    await response.json();
 
   return data.runs;
 }
 
-function ArrowUpRightIcon() {
+function formatStartedAt(
+  value: string,
+) {
+  return new Intl.DateTimeFormat(
+    "en-IN",
+    {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    },
+  ).format(new Date(value));
+}
+
+function formatRelativeTime(
+  value: string,
+) {
+  const seconds = Math.max(
+    0,
+    Math.floor(
+      (Date.now() -
+        new Date(value).getTime()) /
+        1000,
+    ),
+  );
+
+  if (seconds < 60) {
+    return "just now";
+  }
+
+  const minutes = Math.floor(
+    seconds / 60,
+  );
+
+  if (minutes < 60) {
+    return `${minutes} ${
+      minutes === 1
+        ? "minute"
+        : "minutes"
+    } ago`;
+  }
+
+  const hours = Math.floor(
+    minutes / 60,
+  );
+
+  if (hours < 24) {
+    return `${hours} ${
+      hours === 1
+        ? "hour"
+        : "hours"
+    } ago`;
+  }
+
+  const days = Math.floor(
+    hours / 24,
+  );
+
+  return `${days} ${
+    days === 1
+      ? "day"
+      : "days"
+  } ago`;
+}
+
+function StatusBadge({
+  status,
+}: {
+  status: Run["status"];
+}) {
+  const config = {
+    RUNNING: {
+      label: "Running",
+      dot: "#60A5FA",
+      text: "#60A5FA",
+      border:
+        "rgba(37,99,235,0.45)",
+      background:
+        "rgba(37,99,235,0.10)",
+    },
+
+    COMPLETED: {
+      label: "Completed",
+      dot: "#34D399",
+      text: "#34D399",
+      border:
+        "rgba(16,185,129,0.35)",
+      background:
+        "rgba(16,185,129,0.08)",
+    },
+
+    FAILED: {
+      label: "Failed",
+      dot: "#F87171",
+      text: "#F87171",
+      border:
+        "rgba(248,113,113,0.35)",
+      background:
+        "rgba(248,113,113,0.08)",
+    },
+  }[status];
+
+  return (
+    <span
+      className="inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-[12px] font-medium"
+      style={{
+        color: config.text,
+        borderColor: config.border,
+        backgroundColor:
+          config.background,
+      }}
+    >
+      <span
+        className="h-1.5 w-1.5 rounded-full"
+        style={{
+          backgroundColor:
+            config.dot,
+          boxShadow:
+            status === "RUNNING"
+              ? `0 0 8px ${config.dot}`
+              : "none",
+        }}
+      />
+
+      {config.label}
+    </span>
+  );
+}
+
+function ArrowIcon() {
   return (
     <svg
+      aria-hidden="true"
       width="18"
       height="18"
       viewBox="0 0 18 18"
       fill="none"
-      aria-hidden="true"
     >
       <path
-        d="M5 13L13 5"
+        d="M4 9h9"
         stroke="currentColor"
         strokeWidth="1.4"
         strokeLinecap="round"
-        strokeLinejoin="round"
       />
+
       <path
-        d="M7 5H13V11"
+        d="m10 5 4 4-4 4"
         stroke="currentColor"
         strokeWidth="1.4"
         strokeLinecap="round"
@@ -101,298 +214,256 @@ function ArrowUpRightIcon() {
   );
 }
 
-function BeaconMark() {
+function Header() {
   return (
-    <div className="flex h-8 w-8 items-center justify-center rounded-[10px] border border-violet-400/20 bg-violet-400/[0.07]">
-      <div className="h-2.5 w-2.5 rounded-full bg-violet-300 shadow-[0_0_12px_rgba(167,139,250,0.65)]" />
-    </div>
+    <header className="relative h-[80px] shrink-0 border-b border-white/[0.07] bg-[#050B12]/90 backdrop-blur-md">
+      <div className="mx-auto flex h-full w-full max-w-[1520px] items-center justify-between px-6 lg:px-10">
+        <Link
+          href="/"
+          className="group flex items-center gap-3"
+          aria-label="Beacon home"
+        >
+          <span className="relative block h-9 w-9 shrink-0 overflow-hidden rounded-[10px] border border-blue-400/30 bg-[#0B1320] shadow-[0_0_24px_rgba(37,99,235,0.10)]">
+            <Image
+              src={beaconIcon}
+              alt="Beacon"
+              fill
+              priority
+              className="object-contain p-1"
+            />
+          </span>
+
+          <span className="text-[17px] font-semibold tracking-[-0.025em] text-zinc-100">
+            Beacon
+          </span>
+        </Link>
+
+        <div className="flex items-center gap-2.5 text-[13px] text-zinc-300">
+          <span
+            className="h-2 w-2 rounded-full bg-emerald-400"
+            style={{
+              boxShadow:
+                "0 0 10px rgba(52,211,153,0.75)",
+            }}
+          />
+
+          <span>Connected</span>
+        </div>
+      </div>
+
+      <div className="absolute bottom-0 left-1/2 h-px w-20 -translate-x-1/2 bg-blue-500" />
+    </header>
   );
 }
 
 export default async function RunsPage() {
-  const runs = await getRuns();
+  let runs: Run[] = [];
+  let errorMessage: string | null =
+    null;
 
-  const runningCount = runs.filter(
-    (run) => run.status === "RUNNING",
-  ).length;
+  try {
+    runs = await getRuns();
+  } catch (error) {
+    errorMessage =
+      error instanceof Error
+        ? error.message
+        : "Unable to load runs.";
+  }
+
+  const runningCount =
+    runs.filter(
+      (run) =>
+        run.status === "RUNNING",
+    ).length;
 
   return (
-    <main className="min-h-screen bg-[#090A0C] text-zinc-100">
-      {/* Top bar */}
-      <header className="border-b border-white/[0.07]">
+    <main className="min-h-screen bg-[#050B12] text-zinc-100">
+      <Header />
+
+      <section className="relative min-h-[calc(100vh-80px)] overflow-hidden">
         <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
           style={{
-            width: "min(1240px, calc(100% - 64px))",
-            marginInline: "auto",
+            backgroundImage:
+              "radial-gradient(circle at 78% 18%, rgba(37,99,235,0.08), transparent 30%), radial-gradient(circle, rgba(96,165,250,0.13) 0.8px, transparent 0.8px)",
+            backgroundSize:
+              "100% 100%, 18px 18px",
+            opacity: 0.85,
           }}
-          className="flex h-16 items-center justify-between"
-        >
-          <Link
-            href="/runs"
-            className="flex items-center gap-3"
-          >
-            <BeaconMark />
+        />
 
-            <span className="text-[15px] font-semibold tracking-[-0.015em] text-zinc-100">
-              Beacon
-            </span>
-          </Link>
+        <div className="relative mx-auto w-full max-w-[1520px] px-6 pb-14 pt-12 lg:px-10 lg:pt-16">
+          <div className="flex flex-col justify-between gap-10 lg:flex-row lg:items-end">
+            <div>
+              <p className="text-[14px] font-medium tracking-[-0.01em] text-violet-400">
+                Observability
+              </p>
 
-          <div className="flex items-center gap-2.5 text-[13px] text-zinc-500">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.55)]" />
-            Connected
-          </div>
-        </div>
-      </header>
+              <h1 className="mt-2 text-[40px] font-semibold leading-none tracking-[-0.045em] text-white sm:text-[46px]">
+                Runs
+              </h1>
 
-      {/* Main content */}
-      <div
-        style={{
-          width: "min(1240px, calc(100% - 64px))",
-          marginInline: "auto",
-        }}
-        className="pb-20 pt-12"
-      >
-        {/* Page header */}
-        <section className="flex items-end justify-between border-b border-white/[0.07] pb-8">
-          <div>
-            <p className="text-[12px] font-medium tracking-[0.02em] text-violet-300/70">
-              Observability
-            </p>
-
-            <h1 className="mt-2 text-[36px] font-semibold leading-tight tracking-[-0.04em] text-zinc-100">
-              Runs
-            </h1>
-
-            <p className="mt-3 text-[15px] leading-6 text-zinc-400">
-              Inspect agent executions and follow their traces in real time.
-            </p>
-          </div>
-
-          <div className="hidden items-center gap-3 sm:flex">
-            <div className="rounded-lg border border-white/[0.08] bg-white/[0.025] px-3.5 py-2">
-              <span className="text-[13px] text-zinc-400">
-                {runs.length}
-              </span>
-
-              <span className="ml-1.5 text-[13px] text-zinc-600">
-                {runs.length === 1 ? "run" : "runs"}
-              </span>
+              <p className="mt-4 max-w-[620px] text-[15px] leading-6 text-zinc-400 sm:text-[16px]">
+                Inspect agent executions and
+                follow their traces in real
+                time.
+              </p>
             </div>
 
-            {runningCount > 0 && (
-              <div className="rounded-lg border border-blue-400/[0.18] bg-blue-400/[0.06] px-3.5 py-2">
-                <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-blue-400" />
-
-                <span className="text-[13px] text-blue-300">
-                  {runningCount} running
-                </span>
+            <div className="flex items-center gap-3">
+              <div className="rounded-lg border border-white/[0.08] bg-white/[0.025] px-4 py-2 text-[13px] text-zinc-300">
+                {runs.length} runs
               </div>
-            )}
-          </div>
-        </section>
 
-        {/* Runs panel */}
-        <section className="mt-8 overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0D0E11] shadow-[0_24px_70px_rgba(0,0,0,0.25)]">
-          {/* Panel header */}
-          <div className="flex items-center justify-between border-b border-white/[0.07] px-6 py-5">
-            <div>
-              <h2 className="text-[15px] font-medium text-zinc-100">
+              <div className="rounded-lg border border-blue-500/45 bg-blue-500/[0.08] px-4 py-2 text-[13px] text-blue-400">
+                {runningCount} running
+              </div>
+            </div>
+          </div>
+
+          <section className="mt-12 overflow-hidden rounded-[24px] border border-blue-400/20 bg-[#07101A]/90 shadow-[0_30px_90px_rgba(0,0,0,0.32)] backdrop-blur-xl">
+            <div className="border-b border-blue-400/15 px-7 py-6 sm:px-8">
+              <h2 className="text-[18px] font-semibold tracking-[-0.02em] text-zinc-100">
                 Recent runs
               </h2>
 
-              <p className="mt-1 text-[13px] text-zinc-500">
-                Latest agent executions received by Beacon.
+              <p className="mt-1.5 text-[14px] text-zinc-500">
+                Latest agent executions
+                received by Beacon.
               </p>
             </div>
-          </div>
 
-          {runs.length === 0 ? (
-            <div className="px-6 py-24 text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.025] text-zinc-500">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M2.5 12H5.5L7.2 6L11 14L12.8 9H17.5"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+            {errorMessage ? (
+              <div className="flex min-h-[220px] items-center justify-center px-6 text-center">
+                <div>
+                  <p className="text-sm font-medium text-red-400">
+                    Unable to load runs
+                  </p>
+
+                  <p className="mt-2 max-w-md text-xs leading-5 text-zinc-600">
+                    {errorMessage}
+                  </p>
+                </div>
               </div>
+            ) : runs.length === 0 ? (
+              <div className="flex min-h-[220px] items-center justify-center px-6 text-center">
+                <div>
+                  <div className="mx-auto mb-4 h-2 w-2 rounded-full bg-blue-400 shadow-[0_0_12px_rgba(96,165,250,0.65)]" />
 
-              <h3 className="mt-5 text-[15px] font-medium text-zinc-200">
-                No runs yet
-              </h3>
+                  <p className="text-sm font-medium text-zinc-300">
+                    No runs yet
+                  </p>
 
-              <p className="mx-auto mt-2 max-w-md text-[13px] leading-5 text-zinc-500">
-                Once Beacon receives an agent execution, its trace will appear
-                here.
-              </p>
-            </div>
-          ) : (
-            <>
-              {/* Column header */}
-              <div className="hidden border-b border-white/[0.06] px-6 py-3.5 md:grid md:grid-cols-[minmax(360px,1fr)_150px_110px_190px_28px] md:items-center md:gap-8">
-                <span className="text-[11px] font-medium tracking-[0.08em] text-zinc-600">
-                  TRACE
-                </span>
-
-                <span className="text-[11px] font-medium tracking-[0.08em] text-zinc-600">
-                  STATUS
-                </span>
-
-                <span className="text-[11px] font-medium tracking-[0.08em] text-zinc-600">
-                  SPANS
-                </span>
-
-                <span className="text-[11px] font-medium tracking-[0.08em] text-zinc-600">
-                  STARTED
-                </span>
-
-                <span />
+                  <p className="mt-1 text-xs text-zinc-600">
+                    Beacon will show executions
+                    here as spans arrive.
+                  </p>
+                </div>
               </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <div className="min-w-[900px]">
+                  <div className="grid grid-cols-[minmax(340px,1.7fr)_210px_170px_260px_56px] border-b border-blue-400/15 px-7 py-4 text-[10px] font-medium uppercase tracking-[0.14em] text-zinc-500 sm:px-8">
+                    <span>Trace</span>
+                    <span>Status</span>
+                    <span>Spans</span>
+                    <span>Started</span>
+                    <span />
+                  </div>
 
-              {/* Rows */}
-              <div className="divide-y divide-white/[0.06]">
-                {runs.map((run) => {
-                  const status = STATUS_STYLES[run.status];
+                  <div>
+                    {runs.map((run) => (
+                      <Link
+                        key={run.id}
+                        href={`/runs/${run.id}`}
+                        className="group grid grid-cols-[minmax(340px,1.7fr)_210px_170px_260px_56px] items-center border-b border-white/[0.055] px-7 py-6 transition-colors duration-200 last:border-b-0 hover:bg-blue-500/[0.025] sm:px-8"
+                      >
+                        <div className="flex min-w-0 items-center gap-4">
+                          <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-violet-400 shadow-[0_0_8px_rgba(167,139,250,0.28)]" />
 
-                  return (
-                    <Link
-                      key={run.id}
-                      href={`/runs/${run.id}`}
-                      className="group block outline-none transition-colors duration-150 hover:bg-white/[0.025] focus-visible:bg-white/[0.035]"
-                    >
-                      {/* Desktop row */}
-                      <div className="hidden min-h-[92px] grid-cols-[minmax(360px,1fr)_150px_110px_190px_28px] items-center gap-8 px-6 md:grid">
-                        {/* Trace */}
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-3">
-                            <span
-                              aria-hidden="true"
-                              className="h-2 w-2 shrink-0 rounded-full bg-violet-400/80 shadow-[0_0_7px_rgba(167,139,250,0.3)]"
-                            />
-
-                            <span className="truncate font-mono text-[14px] font-medium text-zinc-200">
+                          <div className="min-w-0">
+                            <p className="truncate text-[14px] font-semibold tracking-[-0.015em] text-zinc-100">
                               {run.traceId}
-                            </span>
+                            </p>
+
+                            <p className="mt-1 truncate font-mono text-[11px] text-zinc-600">
+                              {run.id}
+                            </p>
                           </div>
-
-                          <p className="mt-2 truncate pl-5 font-mono text-[11px] text-zinc-500">
-                            {run.id}
-                          </p>
                         </div>
 
-                        {/* Status */}
                         <div>
-                          <span
-                            className={[
-                              "inline-flex items-center gap-2 rounded-lg border px-3 py-1.5",
-                              status.bg,
-                              status.border,
-                            ].join(" ")}
-                          >
-                            <span
-                              className={`h-1.5 w-1.5 rounded-full ${status.dot}`}
-                            />
-
-                            <span
-                              className={`text-[12px] font-medium ${status.text}`}
-                            >
-                              {status.label}
-                            </span>
-                          </span>
+                          <StatusBadge
+                            status={run.status}
+                          />
                         </div>
 
-                        {/* Spans */}
-                        <div className="flex items-baseline gap-1.5">
-                          <span className="text-[15px] font-medium tabular-nums text-zinc-300">
+                        <div className="text-[14px] text-zinc-300">
+                          <span className="font-semibold tabular-nums text-zinc-100">
                             {run._count.nodes}
-                          </span>
-
-                          <span className="text-[12px] text-zinc-500">
+                          </span>{" "}
+                          <span className="text-zinc-500">
                             spans
                           </span>
                         </div>
 
-                        {/* Started */}
-                        <span className="text-[13px] text-zinc-400">
-                          {formatStartedAt(run.startedAt)}
-                        </span>
+                        <div>
+                          <p className="text-[13px] text-zinc-300">
+                            {formatStartedAt(
+                              run.startedAt,
+                            )}
+                          </p>
 
-                        {/* Arrow */}
-                        <span className="flex justify-end text-zinc-700 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-violet-300">
-                          <ArrowUpRightIcon />
-                        </span>
-                      </div>
-
-                      {/* Mobile row */}
-                      <div className="px-5 py-5 md:hidden">
-                        <div className="flex items-start justify-between gap-5">
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2.5">
-                              <span className="h-2 w-2 shrink-0 rounded-full bg-violet-400/80" />
-
-                              <span className="truncate font-mono text-[14px] font-medium text-zinc-200">
-                                {run.traceId}
-                              </span>
-                            </div>
-
-                            <p className="mt-2 truncate pl-4.5 font-mono text-[11px] text-zinc-500">
-                              {run.id}
-                            </p>
-                          </div>
-
-                          <span className="shrink-0 text-zinc-700">
-                            <ArrowUpRightIcon />
-                          </span>
+                          <p className="mt-1 text-[11px] text-zinc-600">
+                            {formatRelativeTime(
+                              run.startedAt,
+                            )}
+                          </p>
                         </div>
 
-                        <div className="mt-5 flex items-center justify-between gap-4">
-                          <span
-                            className={[
-                              "inline-flex items-center gap-2 rounded-lg border px-3 py-1.5",
-                              status.bg,
-                              status.border,
-                            ].join(" ")}
-                          >
-                            <span
-                              className={`h-1.5 w-1.5 rounded-full ${status.dot}`}
-                            />
-
-                            <span
-                              className={`text-[12px] font-medium ${status.text}`}
-                            >
-                              {status.label}
-                            </span>
-                          </span>
-
-                          <span className="text-[13px] text-zinc-500">
-                            {run._count.nodes} spans
-                          </span>
+                        <div className="flex justify-end text-zinc-500 transition-colors duration-200 group-hover:text-zinc-200">
+                          <ArrowIcon />
                         </div>
-
-                        <div className="mt-4 border-t border-white/[0.06] pt-3">
-                          <span className="text-[12px] text-zinc-500">
-                            {formatStartedAt(run.startedAt)}
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </>
-          )}
-        </section>
-      </div>
+            )}
+
+            <div className="border-t border-blue-400/10 px-7 py-5 sm:px-8">
+              <p className="text-[13px] text-zinc-500">
+                Showing {runs.length}{" "}
+                {runs.length === 1
+                  ? "run"
+                  : "runs"}
+              </p>
+            </div>
+          </section>
+
+          <div className="mt-12 flex items-center justify-between gap-6 border-t border-white/[0.08] pt-5 text-[9px] font-medium uppercase tracking-[0.28em] text-zinc-600">
+            <div className="flex items-center gap-3">
+              <span>Build</span>
+              <span>·</span>
+              <span>Observe</span>
+              <span>·</span>
+              <span>Improve</span>
+
+              <span className="hidden h-px w-12 bg-white/[0.08] sm:block" />
+            </div>
+
+            <div className="hidden items-center gap-3 sm:flex">
+              <span className="h-px w-12 bg-white/[0.08]" />
+
+              <span>
+                A clearer perspective for
+                a brighter AI
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
