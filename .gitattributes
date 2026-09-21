@@ -1,0 +1,2 @@
+apps/api/src/lib/otlp/generated/** linguist-generated=true
+apps/api/src/lib/otlp/proto/** linguist-generated=true
