@@ -1,8 +1,8 @@
+import { BeaconSpan } from "../../lib/otlp/beacon-span.types";
 import { spanQueue } from "../../queues/span.queue";
 import { findActiveApiKey } from "./ingestion.repository";
-import type { IngestionPayload } from "./ingestion.schema";
 
-export async function ingestSpan(apiKey: string, payload: IngestionPayload){
+export async function ingestSpan(apiKey: string, spans: BeaconSpan[]){
     const key = await findActiveApiKey(apiKey);
 
     if(!key || !key.workspace){
@@ -12,10 +12,12 @@ export async function ingestSpan(apiKey: string, payload: IngestionPayload){
         };
     }
 
-    await spanQueue.add("ingest-span", {
-        workspaceId: key.workspaceId,
-        ...payload,
-    })
+    for (const span of spans){
+        await spanQueue.add("ingest-span",{
+            workspaceId: key.workspaceId,
+            ...span,
+        })
+    }
 
     return {
         success: true
