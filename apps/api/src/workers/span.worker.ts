@@ -115,6 +115,59 @@ export const spanWorker = new Worker<SpanJobData>(
       }),
     );
 
+    // Reconcile children that arrived before this parent node.
+    const childNodes = await prisma.node.findMany({
+      where: {
+        runId: run.id,
+        parentSpanId: node.spanId,
+      },
+    });
+
+    for (const childNode of childNodes) {
+      try {
+        const edge = await prisma.edge.create({
+          data: {
+            runId: run.id,
+            sourceNodeId: node.id,
+            targetNodeId: childNode.id,
+          },
+        });
+
+        console.log("Edge created for existing child", {
+          runId: run.id,
+          sourceNodeId: node.id,
+          targetNodeId: childNode.id,
+        });
+
+        await redis.publish(
+          `run:${run.id}`,
+          JSON.stringify({
+            type: "edge.created",
+            runId: run.id,
+            edge: {
+              sourceNodeId: edge.sourceNodeId,
+              targetNodeId: edge.targetNodeId,
+            },
+          }),
+        );
+      } catch (err: unknown) {
+        if (
+          err instanceof Prisma.PrismaClientKnownRequestError &&
+          err.code === "P2002"
+        ) {
+          console.warn("Edge already exists, skipping", {
+            runId: run.id,
+            sourceNodeId: node.id,
+            targetNodeId: childNode.id,
+          });
+
+          continue;
+        }
+
+        throw err;
+      }
+    }
+
     if (!parentSpanId) {
       return;
     }
@@ -136,7 +189,7 @@ export const spanWorker = new Worker<SpanJobData>(
     }
 
     try {
-      await prisma.edge.create({
+      const edge = await prisma.edge.create({
         data: {
           runId: run.id,
           sourceNodeId: parentNode.id,
@@ -149,10 +202,22 @@ export const spanWorker = new Worker<SpanJobData>(
         sourceNodeId: parentNode.id,
         targetNodeId: node.id,
       });
+
+      await redis.publish(
+        `run:${run.id}`,
+        JSON.stringify({
+          type: "edge.created",
+          runId: run.id,
+          edge: {
+            sourceNodeId: edge.sourceNodeId,
+            targetNodeId: edge.targetNodeId,
+          },
+        }),
+      );
     } catch (err: unknown) {
       if (
         err instanceof Prisma.PrismaClientKnownRequestError &&
-        (err as Prisma.PrismaClientKnownRequestError).code === "P2002"
+        err.code === "P2002"
       ) {
         console.warn("Edge already exists, skipping", {
           parentSpanId,
@@ -165,18 +230,6 @@ export const spanWorker = new Worker<SpanJobData>(
 
       throw err;
     }
-
-    await redis.publish(
-      `run:${run.id}`,
-      JSON.stringify({
-        type: "edge.created",
-        runId: run.id,
-        edge: {
-          sourceNodeId: parentNode.id,
-          targetNodeId: node.id,
-        },
-      }),
-    );
   },
   {
     connection: redis,
