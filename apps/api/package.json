@@ -19,6 +19,7 @@
     "fastify-plugin": "^6.0.0",
     "ioredis": "^6.0.0",
     "pg": "^8.23.0",
+    "protobufjs": "^8.8.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -27,6 +28,7 @@
     "@types/pg": "^8.21.0",
     "@types/ws": "^8.18.1",
     "prisma": "^7.9.1",
+    "protobufjs-cli": "^2.7.0",
     "tsx": "^4.23.6",
     "typescript": "^7.0.2"
   }
