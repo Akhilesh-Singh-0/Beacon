@@ -1,7 +1,8 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-
+import { decodeOtlpTrace } from "../../lib/otlp/otlp.decoder";;
+import { normalizeOtlpTrace } from "../../lib/otlp/otlp.normalizer";
 import { ingestSpan } from "./ingestion.service";
-import { ingestionSchema } from "./ingestion.schema";
+
 
 export async function ingestController(
   request: FastifyRequest,
@@ -15,24 +16,13 @@ export async function ingestController(
     });
   }
 
-  const result = ingestionSchema.safeParse(request.body);
+  const contentType = request.headers["content-type"] ?? "";
 
-  if (!result.success) {
-    return reply.status(400).send({
-      error: "Invalid request body",
-      details: result.error.issues,
-    });
-  }
+  const decoded = await decodeOtlpTrace(request.body, contentType);
 
-  const serviceResult = await ingestSpan(apiKey, result.data);
+  const spans = normalizeOtlpTrace(decoded);
 
-  if (!serviceResult.success) {
-    return reply.status(401).send({
-      error: serviceResult.error,
-    });
-  }
+  await ingestSpan(apiKey, spans);
 
-  return reply.status(202).send({
-    message: "Span accepted",
-  });
+  return reply.code(200).send({});
 }
