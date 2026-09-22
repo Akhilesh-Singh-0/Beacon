@@ -4,6 +4,9 @@ export async function findNodes(runId: string) {
     return await prisma.node.findMany({
         where: {
             runId: runId
+        },
+        orderBy: {
+            startTime: "asc"
         }
     })
 }
