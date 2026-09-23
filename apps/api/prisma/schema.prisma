@@ -21,6 +21,15 @@ enum NodeStatus {
   STUCK
 }
 
+model User {
+  id String @id @default(cuid())
+  name String?
+  email String @unique
+  clerkId String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+}
+
 model Workspace {
   id String @id @default(cuid())
   name String
