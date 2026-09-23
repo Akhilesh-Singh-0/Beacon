@@ -1,6 +1,17 @@
 "use client";
 
+import {
+  useCallback,
+  useState,
+} from "react";
+
+import type {
+  Edge,
+  Node,
+} from "@xyflow/react";
+
 import DagCanvas from "@/components/dag/dag-canvas";
+import { DagReplay } from "@/components/dag/dag-replay";
 import { useDagWebSocket } from "@/hooks/use-dag-websocket";
 
 type RunDetailClientProps = {
@@ -30,13 +41,96 @@ export default function RunDetailClient({
   runId,
 }: RunDetailClientProps) {
   const {
-    nodes,
-    edges,
+    nodes: liveNodes,
+    edges: liveEdges,
     connectionStatus,
   } = useDagWebSocket(runId);
 
+  const [
+    isReplay,
+    setIsReplay,
+  ] = useState(false);
+
+  const [
+    replayNodes,
+    setReplayNodes,
+  ] = useState<
+    Node[]
+  >([]);
+
+  const [
+    replayEdges,
+    setReplayEdges,
+  ] = useState<
+    Edge[]
+  >([]);
+
+  const [
+    replayVisibleNodeIds,
+    setReplayVisibleNodeIds,
+  ] = useState<
+    string[]
+  >([]);
+
   const connection =
-    CONNECTION_STYLE[connectionStatus];
+    CONNECTION_STYLE[
+      connectionStatus
+    ];
+
+  const handleReplayChange =
+    useCallback(
+      (
+        visibleNodeIds: string[],
+      ) => {
+        setReplayVisibleNodeIds(
+          visibleNodeIds,
+        );
+      },
+      [],
+    );
+
+  const handleReplayToggle =
+    useCallback(() => {
+      if (isReplay) {
+        setIsReplay(false);
+
+        setReplayNodes([]);
+        setReplayEdges([]);
+        setReplayVisibleNodeIds(
+          [],
+        );
+
+        return;
+      }
+
+      setReplayNodes(
+        [...liveNodes],
+      );
+
+      setReplayEdges(
+        [...liveEdges],
+      );
+
+      setReplayVisibleNodeIds(
+        [],
+      );
+
+      setIsReplay(true);
+    }, [
+      isReplay,
+      liveNodes,
+      liveEdges,
+    ]);
+
+  const canvasNodes =
+    isReplay
+      ? replayNodes
+      : liveNodes;
+
+  const canvasEdges =
+    isReplay
+      ? replayEdges
+      : liveEdges;
 
   return (
     <main className="flex h-[100dvh] min-h-0 flex-col overflow-hidden bg-[#050B12] text-zinc-100">
@@ -79,7 +173,8 @@ export default function RunDetailClient({
             <div
               className="flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-medium"
               style={{
-                color: connection.dot,
+                color:
+                  connection.dot,
                 borderColor: `${connection.dot}2A`,
                 backgroundColor: `${connection.dot}0D`,
               }}
@@ -97,15 +192,56 @@ export default function RunDetailClient({
                 }}
               />
 
-              <span>{connection.label}</span>
+              <span>
+                {connection.label}
+              </span>
             </div>
           </header>
 
-          <div className="min-h-0 flex-1">
+          <div className="relative min-h-0 flex-1">
             <DagCanvas
-              nodes={nodes}
-              edges={edges}
+              nodes={
+                canvasNodes
+              }
+              edges={
+                canvasEdges
+              }
+              fitViewOnChange={
+                isReplay
+              }
+              visibleNodeIds={
+                isReplay
+                  ? replayVisibleNodeIds
+                  : undefined
+              }
             />
+
+            <div className="pointer-events-none absolute bottom-4 left-1/2 z-20 flex w-[calc(100%-32px)] max-w-2xl -translate-x-1/2 items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={
+                  handleReplayToggle
+                }
+                className="pointer-events-auto shrink-0 rounded-lg border border-white/[0.1] bg-[#0B121A]/90 px-3.5 py-2 text-[11px] font-medium text-zinc-300 shadow-lg backdrop-blur-md transition-colors hover:border-white/[0.18] hover:text-zinc-100"
+              >
+                {isReplay
+                  ? "Live"
+                  : "Replay"}
+              </button>
+
+              {isReplay && (
+                <div className="pointer-events-auto flex min-w-0 flex-1 rounded-lg border border-white/[0.08] bg-[#0B121A]/90 px-4 py-2.5 shadow-lg backdrop-blur-md">
+                  <DagReplay
+                    nodes={
+                      replayNodes
+                    }
+                    onReplayChange={
+                      handleReplayChange
+                    }
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
           <footer className="flex min-h-[78px] shrink-0 items-center justify-between border-t border-white/[0.06] bg-[#090E14]/80 px-5 sm:px-7">
@@ -126,7 +262,9 @@ export default function RunDetailClient({
                 </p>
 
                 <p className="mt-1 text-[17px] font-semibold tabular-nums text-zinc-200">
-                  {nodes.length}
+                  {
+                    liveNodes.length
+                  }
                 </p>
               </div>
 
@@ -138,7 +276,9 @@ export default function RunDetailClient({
                 </p>
 
                 <p className="mt-1 text-[17px] font-semibold tabular-nums text-zinc-200">
-                  {edges.length}
+                  {
+                    liveEdges.length
+                  }
                 </p>
               </div>
             </div>
