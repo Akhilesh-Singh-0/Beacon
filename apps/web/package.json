@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@beacon/ui": "workspace:*",
+    "@clerk/nextjs": "^7.9.4",
     "@xyflow/react": "^12.11.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
