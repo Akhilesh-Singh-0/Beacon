@@ -20,6 +20,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@clerk/backend':
+        specifier: ^3.18.1
+        version: 3.18.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@fastify/cors':
         specifier: ^11.3.0
         version: 11.3.0
@@ -53,6 +56,9 @@ importers:
       protobufjs:
         specifier: ^8.8.0
         version: 8.8.0
+      svix:
+        specifier: ^2.5.0
+        version: 2.5.0
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -4621,6 +4627,10 @@ packages:
   supports-preserve-symlinks-flag@1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
+
+  svix@2.5.0:
+    resolution: {integrity: sha512-mqcwCPKL6J5yqC2EQy5ZqE5XEJriCZffy49EGBDCsnrQ7RAYF4kZLJhKfXrB0n21S+3M9qYmQ9YjzrNjRlIuCw==}
+    engines: {node: '>=22'}
 
   systeminformation@5.33.1:
     resolution: {integrity: sha512-DEN6ICHk3Tk0Uf/hrAHh7xlt7iL5CJFBtPZinA0H62DrGG/KPKqq/Nzj6lCXPS4Ay/sf/14zNnk9LpqKzBIc+w==}
@@ -9590,6 +9600,10 @@ snapshots:
       has-flag: 4.0.0
 
   supports-preserve-symlinks-flag@1.0.0: {}
+
+  svix@2.5.0:
+    dependencies:
+      standardwebhooks: 1.1.1
 
   systeminformation@5.33.1: {}
 

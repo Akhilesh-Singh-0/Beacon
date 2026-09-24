@@ -9,6 +9,7 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@clerk/backend": "^3.18.1",
     "@fastify/cors": "^11.3.0",
     "@fastify/websocket": "^11.3.0",
     "@prisma/adapter-pg": "^7.9.1",
@@ -20,6 +21,7 @@
     "ioredis": "^6.0.0",
     "pg": "^8.23.0",
     "protobufjs": "^8.8.0",
+    "svix": "^2.5.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
