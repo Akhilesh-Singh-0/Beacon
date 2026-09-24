@@ -10,7 +10,8 @@ const envSchema = z.object({
     PORT: z.coerce.number().default(3001),
     DATABASE_URL: z.string().url(),
     REDIS_URL: z.string().url(),
-    CLERK_WEBHOOK_SECRET: z.string().min(1)
+    CLERK_WEBHOOK_SECRET: z.string().min(1),
+    CLERK_SECRET_KEY: z.string().min(1),
 });
 
 const parsed = envSchema.safeParse(process.env);

@@ -8,6 +8,7 @@ import prismaPlugin from "./plugins/prisma";
 import { ingestionRoutes } from "./modules/ingestion/ingestion.route";
 import { runsRoutes } from "./modules/runs/runs.route";
 import { authRoute } from "./modules/auth/auth.route";
+import { meRoute } from "./modules/me/me.route";
 import websocketPlugin from "./websocket/websocket.server";
 
 const app = Fastify({
@@ -23,6 +24,7 @@ app.register(healthPlugin);
 app.register(errorHandler);
 app.register(prismaPlugin);
 app.register(authRoute);
+app.register(meRoute);
 app.register(ingestionRoutes);
 app.register(runsRoutes);
 app.register(websocketPlugin);
