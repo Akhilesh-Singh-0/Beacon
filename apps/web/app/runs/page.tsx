@@ -1,17 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
 
 import beaconIcon from "@/app/beacon-icon.svg";
 
 type Run = {
   id: string;
   traceId: string;
-  status:
-    | "RUNNING"
-    | "COMPLETED"
-    | "FAILED";
+  status: "RUNNING" | "COMPLETED" | "FAILED";
   startedAt: string;
-  completedAt: string | null;
   _count: {
     nodes: number;
   };
@@ -21,25 +18,46 @@ type RunsResponse = {
   runs: Run[];
 };
 
+type MeResponse = {
+  apiKey: string;
+};
+
 const API_URL =
   process.env.BEACON_API_URL ??
   "http://localhost:3001";
 
-const API_KEY =
-  process.env.BEACON_API_KEY;
-
 async function getRuns(): Promise<Run[]> {
-  if (!API_KEY) {
+  const { getToken } = await auth();
+  const token = await getToken();
+
+  if (!token) {
+    throw new Error("Unauthorized.");
+  }
+
+  const meResponse = await fetch(
+    `${API_URL}/api/me`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
+    },
+  );
+
+  if (!meResponse.ok) {
     throw new Error(
-      "BEACON_API_KEY is not configured.",
+      `Failed to fetch user: ${meResponse.status}`,
     );
   }
+
+  const { apiKey } =
+    (await meResponse.json()) as MeResponse;
 
   const response = await fetch(
     `${API_URL}/runs`,
     {
       headers: {
-        "x-api-key": API_KEY,
+        "x-api-key": apiKey,
       },
       cache: "no-store",
     },
@@ -51,35 +69,27 @@ async function getRuns(): Promise<Run[]> {
     );
   }
 
-  const data: RunsResponse =
-    await response.json();
+  const data =
+    (await response.json()) as RunsResponse;
 
   return data.runs;
 }
 
-function formatStartedAt(
-  value: string,
-) {
-  return new Intl.DateTimeFormat(
-    "en-IN",
-    {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    },
-  ).format(new Date(value));
+function formatStartedAt(value: string) {
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(value));
 }
 
-function formatRelativeTime(
-  value: string,
-) {
+function formatRelativeTime(value: string) {
   const seconds = Math.max(
     0,
     Math.floor(
-      (Date.now() -
-        new Date(value).getTime()) /
+      (Date.now() - new Date(value).getTime()) /
         1000,
     ),
   );
@@ -88,38 +98,26 @@ function formatRelativeTime(
     return "just now";
   }
 
-  const minutes = Math.floor(
-    seconds / 60,
-  );
+  const minutes = Math.floor(seconds / 60);
 
   if (minutes < 60) {
     return `${minutes} ${
-      minutes === 1
-        ? "minute"
-        : "minutes"
+      minutes === 1 ? "minute" : "minutes"
     } ago`;
   }
 
-  const hours = Math.floor(
-    minutes / 60,
-  );
+  const hours = Math.floor(minutes / 60);
 
   if (hours < 24) {
     return `${hours} ${
-      hours === 1
-        ? "hour"
-        : "hours"
+      hours === 1 ? "hour" : "hours"
     } ago`;
   }
 
-  const days = Math.floor(
-    hours / 24,
-  );
+  const days = Math.floor(hours / 24);
 
   return `${days} ${
-    days === 1
-      ? "day"
-      : "days"
+    days === 1 ? "day" : "days"
   } ago`;
 }
 
@@ -133,30 +131,22 @@ function StatusBadge({
       label: "Running",
       dot: "#60A5FA",
       text: "#60A5FA",
-      border:
-        "rgba(37,99,235,0.45)",
-      background:
-        "rgba(37,99,235,0.10)",
+      border: "rgba(37,99,235,0.45)",
+      background: "rgba(37,99,235,0.10)",
     },
-
     COMPLETED: {
       label: "Completed",
       dot: "#34D399",
       text: "#34D399",
-      border:
-        "rgba(16,185,129,0.35)",
-      background:
-        "rgba(16,185,129,0.08)",
+      border: "rgba(16,185,129,0.35)",
+      background: "rgba(16,185,129,0.08)",
     },
-
     FAILED: {
       label: "Failed",
       dot: "#F87171",
       text: "#F87171",
-      border:
-        "rgba(248,113,113,0.35)",
-      background:
-        "rgba(248,113,113,0.08)",
+      border: "rgba(248,113,113,0.35)",
+      background: "rgba(248,113,113,0.08)",
     },
   }[status];
 
@@ -166,51 +156,21 @@ function StatusBadge({
       style={{
         color: config.text,
         borderColor: config.border,
-        backgroundColor:
-          config.background,
+        backgroundColor: config.background,
       }}
     >
       <span
         className="h-1.5 w-1.5 rounded-full"
         style={{
-          backgroundColor:
-            config.dot,
+          backgroundColor: config.dot,
           boxShadow:
             status === "RUNNING"
               ? `0 0 8px ${config.dot}`
               : "none",
         }}
       />
-
       {config.label}
     </span>
-  );
-}
-
-function ArrowIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-    >
-      <path
-        d="M4 9h9"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-      />
-
-      <path
-        d="m10 5 4 4-4 4"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }
 
@@ -246,7 +206,6 @@ function Header() {
                 "0 0 10px rgba(52,211,153,0.75)",
             }}
           />
-
           <span>Connected</span>
         </div>
       </div>
@@ -258,8 +217,7 @@ function Header() {
 
 export default async function RunsPage() {
   let runs: Run[] = [];
-  let errorMessage: string | null =
-    null;
+  let errorMessage: string | null = null;
 
   try {
     runs = await getRuns();
@@ -270,11 +228,9 @@ export default async function RunsPage() {
         : "Unable to load runs.";
   }
 
-  const runningCount =
-    runs.filter(
-      (run) =>
-        run.status === "RUNNING",
-    ).length;
+  const runningCount = runs.filter(
+    (run) => run.status === "RUNNING",
+  ).length;
 
   return (
     <main className="min-h-screen bg-[#050B12] text-zinc-100">
@@ -289,7 +245,6 @@ export default async function RunsPage() {
               "radial-gradient(circle at 78% 18%, rgba(37,99,235,0.08), transparent 30%), radial-gradient(circle, rgba(96,165,250,0.13) 0.8px, transparent 0.8px)",
             backgroundSize:
               "100% 100%, 18px 18px",
-            opacity: 0.85,
           }}
         />
 
@@ -393,11 +348,9 @@ export default async function RunsPage() {
                           </div>
                         </div>
 
-                        <div>
-                          <StatusBadge
-                            status={run.status}
-                          />
-                        </div>
+                        <StatusBadge
+                          status={run.status}
+                        />
 
                         <div className="text-[14px] text-zinc-300">
                           <span className="font-semibold tabular-nums text-zinc-100">
@@ -423,7 +376,27 @@ export default async function RunsPage() {
                         </div>
 
                         <div className="flex justify-end text-zinc-500 transition-colors duration-200 group-hover:text-zinc-200">
-                          <ArrowIcon />
+                          <svg
+                            aria-hidden="true"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 18 18"
+                            fill="none"
+                          >
+                            <path
+                              d="M4 9h9"
+                              stroke="currentColor"
+                              strokeWidth="1.4"
+                              strokeLinecap="round"
+                            />
+                            <path
+                              d="m10 5 4 4-4 4"
+                              stroke="currentColor"
+                              strokeWidth="1.4"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
                         </div>
                       </Link>
                     ))}
@@ -435,9 +408,7 @@ export default async function RunsPage() {
             <div className="border-t border-blue-400/10 px-7 py-5 sm:px-8">
               <p className="text-[13px] text-zinc-500">
                 Showing {runs.length}{" "}
-                {runs.length === 1
-                  ? "run"
-                  : "runs"}
+                {runs.length === 1 ? "run" : "runs"}
               </p>
             </div>
           </section>
@@ -449,13 +420,10 @@ export default async function RunsPage() {
               <span>Observe</span>
               <span>·</span>
               <span>Improve</span>
-
-              <span className="hidden h-px w-12 bg-white/[0.08] sm:block" />
             </div>
 
             <div className="hidden items-center gap-3 sm:flex">
               <span className="h-px w-12 bg-white/[0.08]" />
-
               <span>
                 A clearer perspective for
                 a brighter AI
