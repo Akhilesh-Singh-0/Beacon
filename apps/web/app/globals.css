@@ -4,65 +4,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
-html,
-body {
-  width: 100%;
-  min-height: 100%;
-  overflow-x: hidden;
-  background: #0a0a0a;
-  color: #f4f4f5;
-}
-
-html {
-  color-scheme: dark;
-}
-
-body {
-  min-height: 100vh;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button,
-input,
-textarea,
-select {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-::selection {
-  background: rgba(37, 99, 235, 0.28);
-  color: #fafafa;
-}
-
-.imgDark {
-  display: none;
-}
-
-.imgLight {
-  display: unset;
-}
-
-@media (prefers-color-scheme: dark) {
-  .imgLight {
-    display: none;
-  }
-
-  .imgDark {
-    display: unset;
-  }
-}
-
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: var(--font-sans);
+  --font-heading: var(--font-geist-sans);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -86,27 +31,14 @@ button {
 
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
-
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
-
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
-
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
-
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
-
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-
-  --color-destructive: var(--destructive);
-
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
 
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
@@ -118,139 +50,211 @@ button {
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: #f3f3f1;
+  --foreground: #181819;
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card: #fafaf9;
+  --card-foreground: #181819;
 
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
+  --popover: #fafaf9;
+  --popover-foreground: #181819;
 
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
+  --primary: #181819;
+  --primary-foreground: #f3f3f1;
 
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
+  --secondary: #eeeeec;
+  --secondary-foreground: #181819;
 
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  --muted: #eeeeec;
+  --muted-foreground: #666665;
 
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --accent: #eeeeec;
+  --accent-foreground: #181819;
 
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: #b63c50;
 
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: #dededb;
+  --input: #dededb;
+  --ring: #b5b4b1;
 
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --chart-1: #8d86d8;
+  --chart-2: #159570;
+  --chart-3: #b87925;
+  --chart-4: #b63c50;
+  --chart-5: #2563eb;
 
   --radius: 0.625rem;
 
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar: #fafaf9;
+  --sidebar-foreground: #181819;
+  --sidebar-primary: #181819;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eeeeec;
+  --sidebar-accent-foreground: #181819;
+  --sidebar-border: #dededb;
+  --sidebar-ring: #b5b4b1;
 
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --beacon-bg: #f3f3f1;
+  --beacon-surface: #fafaf9;
+  --beacon-surface-raised: #eeeeec;
 
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --beacon-border: #dededb;
+  --beacon-border-strong: #d2d2cf;
 
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --beacon-text: #181819;
+  --beacon-text-secondary: #666665;
+  --beacon-text-muted: #8a8987;
+  --beacon-text-subtle: #b5b4b1;
+
+  --beacon-primary: #2563eb;
+  --beacon-success: #159570;
+  --beacon-warning: #b87925;
+  --beacon-error: #b63c50;
+  --beacon-info: #7169b7;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
+  --background: #050609;
+  --foreground: #e2e2e4;
 
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
+  --card: #101113;
+  --card-foreground: #e2e2e4;
 
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
+  --popover: #101113;
+  --popover-foreground: #e2e2e4;
 
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary: #e2e2e4;
+  --primary-foreground: #090a0c;
 
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
+  --secondary: #18191a;
+  --secondary-foreground: #e2e2e4;
 
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
+  --muted: #18191a;
+  --muted-foreground: #777675;
 
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --accent: #18191a;
+  --accent-foreground: #e2e2e4;
 
-  --destructive: oklch(0.704 0.191 22.216);
+  --destructive: #b83c52;
 
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --border: #202021;
+  --input: #242526;
+  --ring: #555556;
 
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --chart-1: #8d86d8;
+  --chart-2: #19c79a;
+  --chart-3: #d99a45;
+  --chart-4: #b83c52;
+  --chart-5: #06b6d4;
 
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar: #090a0c;
+  --sidebar-foreground: #e2e2e4;
+  --sidebar-primary: #3b82f6;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #18191a;
+  --sidebar-accent-foreground: #e2e2e4;
+  --sidebar-border: #202021;
+  --sidebar-ring: #555556;
 
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --beacon-bg: #050609;
+  --beacon-surface: #101113;
+  --beacon-surface-raised: #18191a;
 
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --beacon-border: #202021;
+  --beacon-border-strong: #2b2a2b;
 
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --beacon-text: #e2e2e4;
+  --beacon-text-secondary: #a5a6a7;
+  --beacon-text-muted: #777675;
+  --beacon-text-subtle: #3c3738;
+
+  --beacon-primary: #3b82f6;
+  --beacon-success: #19c79a;
+  --beacon-warning: #d99a45;
+  --beacon-error: #b83c52;
+  --beacon-info: #8d86d8;
 }
 
-/* Base styles */
-
-@layer base {
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-  }
-
-  html {
-    font-family: var(--font-sans);
-  }
-
-  body {
-    margin: 0;
-    min-height: 100vh;
-  }
-
-  img,
-  svg,
-  video,
-  canvas {
-    display: block;
-  }
-
-  button,
-  input,
-  textarea,
-  select {
-    margin: 0;
-  }
-
-  * {
-    @apply border-border outline-ring/50;
-  }
+html {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
 }
 
-/* React Flow */
+body {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  @apply border-border outline-ring/50;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  margin: 0;
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+img,
+svg,
+video,
+canvas {
+  display: block;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--beacon-primary) 18%, transparent);
+  color: var(--foreground);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Theme image helpers                                                        */
+/* -------------------------------------------------------------------------- */
+
+.imgDark {
+  display: none;
+}
+
+.imgLight {
+  display: unset;
+}
+
+.dark .imgLight {
+  display: none;
+}
+
+.dark .imgDark {
+  display: unset;
+}
+
+/* -------------------------------------------------------------------------- */
+/* React Flow                                                                  */
+/* -------------------------------------------------------------------------- */
 
 .react-flow {
   background: transparent !important;
@@ -274,14 +278,15 @@ button {
 
 .react-flow__controls {
   overflow: hidden;
-
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid var(--beacon-border) !important;
   border-radius: 10px !important;
-
-  background: rgba(13, 13, 16, 0.86) !important;
-
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35) !important;
-
+  background: color-mix(
+    in srgb,
+    var(--beacon-surface) 92%,
+    transparent
+  ) !important;
+  box-shadow: 0 12px 30px
+    color-mix(in srgb, var(--beacon-text) 10%, transparent) !important;
   backdrop-filter: blur(12px);
 }
 
@@ -289,16 +294,12 @@ button {
   display: flex !important;
   align-items: center;
   justify-content: center;
-
   width: 34px !important;
   height: 34px !important;
-
   border: 0 !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-
+  border-bottom: 1px solid var(--beacon-border) !important;
   background: transparent !important;
-  color: #a1a1aa !important;
-
+  color: var(--beacon-text-muted) !important;
   transition:
     background 150ms ease,
     color 150ms ease;
@@ -309,16 +310,19 @@ button {
 }
 
 .react-flow__controls-button:hover {
-  background: rgba(255, 255, 255, 0.045) !important;
-  color: #f4f4f5 !important;
+  background: var(--beacon-surface-raised) !important;
+  color: var(--beacon-text) !important;
 }
 
 .react-flow__controls-button:focus-visible {
-  outline: 1px solid rgba(139, 92, 246, 0.65) !important;
+  outline: 1px solid
+    color-mix(in srgb, var(--beacon-primary) 55%, transparent) !important;
   outline-offset: -2px;
 }
 
-/* Beacon CTA core */
+/* -------------------------------------------------------------------------- */
+/* Beacon core                                                                */
+/* -------------------------------------------------------------------------- */
 
 .beacon-core {
   isolation: isolate;
@@ -329,45 +333,38 @@ button {
   position: absolute;
   inset: 0;
   z-index: 0;
-
   border-radius: inherit;
-
-  background:
-    radial-gradient(
-      circle at 50% 45%,
-      rgba(59, 130, 246, 0.16),
-      transparent 62%
-    );
-
+  background: radial-gradient(
+    circle at 50% 45%,
+    color-mix(in srgb, var(--beacon-primary) 14%, transparent),
+    transparent 62%
+  );
   animation: beacon-core-breathe 2.8s ease-in-out infinite;
 }
 
 .beacon-core-glow {
   background: radial-gradient(
     circle,
-    rgba(37, 99, 235, 0.28) 0%,
-    rgba(37, 99, 235, 0.12) 30%,
-    rgba(37, 99, 235, 0) 72%
+    color-mix(in srgb, var(--beacon-primary) 24%, transparent) 0%,
+    color-mix(in srgb, var(--beacon-primary) 10%, transparent) 30%,
+    transparent 72%
   );
-
   filter: blur(14px);
-
   animation: beacon-core-glow 2.4s ease-in-out infinite;
 }
 
 .beacon-core-ring {
-  border: 1.5px solid rgba(96, 165, 250, 0.9);
-
+  border: 1.5px solid
+    color-mix(in srgb, var(--beacon-primary) 82%, white);
   box-shadow:
-    0 0 8px rgba(59, 130, 246, 0.5),
-    inset 0 0 10px rgba(59, 130, 246, 0.08);
-
+    0 0 8px color-mix(in srgb, var(--beacon-primary) 42%, transparent),
+    inset 0 0 10px color-mix(in srgb, var(--beacon-primary) 7%, transparent);
   animation: beacon-core-ring 2.2s ease-in-out infinite;
 }
 
 .beacon-core-ring-secondary {
-  border: 1px solid rgba(96, 165, 250, 0.3);
-
+  border: 1px solid
+    color-mix(in srgb, var(--beacon-primary) 26%, transparent);
   animation: beacon-core-ring-secondary 2.8s ease-in-out infinite;
 }
 
@@ -438,6 +435,343 @@ button {
   }
 }
 
+/* -------------------------------------------------------------------------- */
+/* Workflow animations                                                        */
+/* -------------------------------------------------------------------------- */
+
+.workflow-trace {
+  animation: beacon-trace-move 2.8s ease-in-out infinite;
+}
+
+.workflow-pulse {
+  animation: beacon-pulse-ring 2.4s ease-out infinite;
+}
+
+.performance-bar {
+  transform-origin: bottom;
+  animation: beacon-bar-pulse 2.2s ease-in-out infinite alternate;
+}
+
+.workflow-scan {
+  animation: beacon-scan-move 3.5s ease-in-out infinite;
+}
+
+@keyframes beacon-trace-move {
+  0% {
+    transform: translate(-80px, -50%);
+    opacity: 0;
+  }
+
+  15%,
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(620px, -50%);
+    opacity: 0;
+  }
+}
+
+@keyframes beacon-pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+
+  70%,
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+@keyframes beacon-bar-pulse {
+  0% {
+    transform: scaleY(0.72);
+    opacity: 0.45;
+  }
+
+  100% {
+    transform: scaleY(1);
+    opacity: 0.85;
+  }
+}
+
+@keyframes beacon-scan-move {
+  0% {
+    transform: translateX(-80px);
+  }
+
+  55%,
+  100% {
+    transform: translateX(300px);
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Telemetry animations                                                       */
+/* -------------------------------------------------------------------------- */
+
+.telemetry-status-dot {
+  animation: telemetry-status-pulse 2s ease-in-out infinite;
+}
+
+.telemetry-entry {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.9fr) minmax(190px, 1.1fr);
+  align-items: center;
+  column-gap: 32px;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(6px);
+  animation-duration: 10s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+.telemetry-entry > div:first-child {
+  min-width: 0;
+}
+
+.telemetry-entry > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 0;
+  padding-left: 0;
+}
+
+.telemetry-entry-0 {
+  animation-name: telemetry-entry-0;
+}
+
+.telemetry-entry-1 {
+  animation-name: telemetry-entry-1;
+}
+
+.telemetry-entry-2 {
+  animation-name: telemetry-entry-2;
+}
+
+.telemetry-entry-3 {
+  animation-name: telemetry-entry-3;
+}
+
+.telemetry-cursor {
+  opacity: 0;
+  animation: telemetry-cursor-blink 0.8s steps(1) infinite;
+}
+
+@keyframes telemetry-entry-0 {
+  0%,
+  4% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  8%,
+  86% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  92%,
+  100% {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes telemetry-entry-1 {
+  0%,
+  14% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  18%,
+  86% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  92%,
+  100% {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes telemetry-entry-2 {
+  0%,
+  28% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  32%,
+  86% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  92%,
+  100% {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes telemetry-entry-3 {
+  0%,
+  42% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  46%,
+  86% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  92%,
+  100% {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes telemetry-cursor-blink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+
+  46%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes telemetry-status-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.9);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Initial landing reveal                                                     */
+/* -------------------------------------------------------------------------- */
+
+.beacon-reveal {
+  animation: beacon-reveal 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.beacon-reveal-1 {
+  animation-delay: 80ms;
+}
+
+.beacon-reveal-2 {
+  animation-delay: 160ms;
+}
+
+.beacon-reveal-3 {
+  animation-delay: 240ms;
+}
+
+.beacon-reveal-4 {
+  animation-delay: 340ms;
+}
+
+.beacon-reveal-5 {
+  animation-delay: 460ms;
+}
+
+@keyframes beacon-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Scroll reveal                                                             */
+/* -------------------------------------------------------------------------- */
+
+.beacon-scroll-reveal {
+  opacity: 0;
+  will-change: opacity, transform, filter;
+  transition:
+    opacity 800ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 800ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 800ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.beacon-scroll-reveal-up {
+  transform: translate3d(0, 28px, 0);
+}
+
+.beacon-scroll-reveal-left {
+  transform: translate3d(-32px, 0, 0);
+}
+
+.beacon-scroll-reveal-right {
+  transform: translate3d(32px, 0, 0);
+}
+
+.beacon-scroll-reveal-scale {
+  transform: scale(0.96);
+}
+
+.beacon-scroll-reveal-soft {
+  transform: translate3d(0, 18px, 0);
+  filter: blur(5px);
+}
+
+.beacon-scroll-reveal-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  filter: blur(0);
+}
+
+.beacon-scroll-reveal-scale.beacon-scroll-reveal-visible {
+  transform: scale(1);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Responsive                                                                 */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 640px) {
+  .telemetry-entry {
+    grid-template-columns: 1fr;
+    row-gap: 6px;
+  }
+
+  .telemetry-entry > div:last-child {
+    margin-left: 12px;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Reduced motion                                                             */
+/* -------------------------------------------------------------------------- */
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -452,7 +786,27 @@ button {
   .beacon-core-glow,
   .beacon-core-ring,
   .beacon-core-ring-secondary,
-  .beacon-core-image {
+  .beacon-core-image,
+  .workflow-trace,
+  .workflow-pulse,
+  .performance-bar,
+  .workflow-scan,
+  .telemetry-status-dot,
+  .telemetry-entry,
+  .telemetry-cursor,
+  .beacon-reveal {
     animation: none !important;
+  }
+
+  .beacon-scroll-reveal,
+  .beacon-scroll-reveal-up,
+  .beacon-scroll-reveal-left,
+  .beacon-scroll-reveal-right,
+  .beacon-scroll-reveal-scale,
+  .beacon-scroll-reveal-soft {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
   }
 }
