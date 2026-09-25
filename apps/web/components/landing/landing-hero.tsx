@@ -18,7 +18,6 @@ function ArrowIcon() {
         strokeWidth="1.4"
         strokeLinecap="round"
       />
-
       <path
         d="M8.5 4L12.5 8L8.5 12"
         stroke="currentColor"
@@ -30,16 +29,30 @@ function ArrowIcon() {
   );
 }
 
-function GithubIcon() {
+function RunsIcon() {
   return (
     <svg
       aria-hidden="true"
-      width="17"
-      height="17"
-      viewBox="0 0 24 24"
-      fill="currentColor"
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
     >
-      <path d="M12 .75a11.25 11.25 0 0 0-3.56 21.92c.56.1.77-.24.77-.54v-2.1c-3.14.68-3.8-1.33-3.8-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.03-.7.08-.69.08-.69 1.14.08 1.74 1.17 1.74 1.17 1.01 1.74 2.65 1.24 3.3.95.1-.73.39-1.24.72-1.53-2.51-.29-5.15-1.26-5.15-5.61 0-1.24.44-2.25 1.16-3.05-.12-.29-.5-1.45.11-3.02 0 0 .95-.31 3.11 1.17a10.8 10.8 0 0 1 5.66 0c2.16-1.48 3.1-1.17 3.1-1.17.62 1.57.23 2.73.12 3.02.72.8 1.15 1.81 1.15 3.05 0 4.36-2.65 5.31-5.17 5.59.41.36.77 1.07.77 2.16v3.2c0 .3.2.65.78.54A11.25 11.25 0 0 0 12 .75Z" />
+      <rect
+        x="2.5"
+        y="2.5"
+        width="11"
+        height="11"
+        rx="2"
+        stroke="currentColor"
+        strokeWidth="1.3"
+      />
+      <path
+        d="M5 8h6M8 5v6"
+        stroke="currentColor"
+        strokeWidth="1.3"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -48,136 +61,44 @@ export default function LandingHero() {
   return (
     <section
       id="product"
-      style={{
-        position: "relative",
-        width: "100%",
-        overflow: "hidden",
-      }}
+      className="relative w-full overflow-hidden bg-[var(--beacon-bg)]"
     >
-      {/* Atmosphere */}
       <div
         aria-hidden="true"
-        style={{
-          position: "absolute",
-          inset: 0,
-          height: "760px",
-          background:
-            "radial-gradient(circle at 50% 30%, rgba(37,99,235,0.10), transparent 34%)",
-          pointerEvents: "none",
-        }}
-      />
-
-      {/* Grid */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          inset: 0,
-          height: "760px",
-          opacity: 0.4,
-          pointerEvents: "none",
-          backgroundImage:
-            "linear-gradient(rgba(96,165,250,0.028) 1px, transparent 1px), linear-gradient(90deg, rgba(96,165,250,0.028) 1px, transparent 1px)",
-          backgroundSize: "64px 64px",
-          maskImage:
-            "linear-gradient(to bottom, black 0%, transparent 85%)",
-          WebkitMaskImage:
-            "linear-gradient(to bottom, black 0%, transparent 85%)",
-        }}
+        className="pointer-events-none absolute inset-x-0 top-0 h-[760px] opacity-40 [background-image:linear-gradient(color-mix(in_srgb,var(--foreground)_3%,transparent)_1px,transparent_1px),linear-gradient(90deg,color-mix(in_srgb,var(--foreground)_3%,transparent)_1px,transparent_1px)] [background-size:64px_64px] [mask-image:linear-gradient(to_bottom,black_0%,transparent_85%)]"
       />
 
       <LandingContainer>
-        <div
-          style={{
-            position: "relative",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            paddingTop: "clamp(88px, 9vw, 136px)",
-            paddingBottom: "clamp(80px, 8vw, 120px)",
-          }}
-        >
-          {/* Hero copy */}
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "900px",
-              marginInline: "auto",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              textAlign: "center",
-            }}
-          >
-            {/* Eyebrow */}
-            <div
-              className="inline-flex items-center rounded-full border border-blue-400/15 bg-blue-400/[0.05] text-blue-200/80 shadow-[0_0_30px_rgba(37,99,235,0.05)]"
-              style={{
-                minHeight: "32px",
-                paddingInline: "14px",
-                gap: "8px",
-              }}
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.7)]" />
+        <div className="relative flex flex-col items-center pb-[clamp(80px,8vw,120px)] pt-[clamp(88px,9vw,136px)]">
+          <div className="mx-auto flex w-full max-w-[900px] flex-col items-center text-center">
+            <div className="beacon-reveal beacon-reveal-1 inline-flex min-h-8 items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--beacon-info)_24%,var(--border))] bg-[color-mix(in_srgb,var(--beacon-info)_5%,transparent)] px-3.5 text-[color-mix(in_srgb,var(--beacon-info)_78%,var(--foreground))]">
+              <span
+                aria-hidden="true"
+                className="h-1.5 w-1.5 rounded-full bg-[var(--beacon-info)]"
+              />
 
-              <span className="text-[11px] font-medium tracking-[0.02em]">
-                Open-source observability for AI agents
-              </span>
-
-              <span className="text-zinc-700">·</span>
-
-              <span className="hidden text-[11px] text-zinc-500 sm:inline">
-                See every step as it happens
+              <span className="text-[10px] font-medium uppercase tracking-[0.18em]">
+                Real-time observability for AI agents
               </span>
             </div>
 
-            {/* Heading */}
-            <h1
-              className="font-semibold tracking-[-0.055em] text-zinc-50"
-              style={{
-                marginTop: "28px",
-                maxWidth: "860px",
-                fontSize:
-                  "clamp(52px, 6.4vw, 84px)",
-                lineHeight: 0.98,
-              }}
-            >
-              See what your
-              <span className="block text-blue-500">
-                AI agents are doing.
+            <h1 className="beacon-reveal beacon-reveal-2 mt-7 max-w-[900px] font-semibold text-[clamp(52px,6.4vw,84px)] leading-[0.98] tracking-[-0.055em] text-[var(--beacon-text)]">
+              Turn your AI agents
+              <span className="block bg-gradient-to-r from-[#a89bea] via-[#b9aaf2] to-[#8dd9d0] bg-clip-text text-transparent">
+                into clear insights.
               </span>
             </h1>
 
-            {/* Description */}
-            <p
-              className="text-zinc-400"
-              style={{
-                marginTop: "28px",
-                maxWidth: "680px",
-                fontSize:
-                  "clamp(16px, 1.35vw, 18px)",
-                lineHeight: 1.75,
-              }}
-            >
+            <p className="beacon-reveal beacon-reveal-3 mt-7 max-w-[680px] text-[clamp(16px,1.35vw,18px)] leading-[1.75] text-[var(--beacon-text-secondary)]">
               Beacon turns agent executions into live, inspectable traces.
               Follow every tool call, model decision, and execution path as it
               happens.
             </p>
 
-            {/* Actions */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexWrap: "wrap",
-                gap: "12px",
-                marginTop: "36px",
-              }}
-            >
+            <div className="beacon-reveal beacon-reveal-4 mt-9 flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/sign-up"
-                className="group inline-flex h-12 min-w-[142px] items-center justify-center gap-2 rounded-xl bg-[#2563EB] px-5 text-[14px] font-medium text-white shadow-[0_10px_30px_rgba(37,99,235,0.22)] transition-all duration-200 hover:bg-[#3B82F6] hover:shadow-[0_14px_36px_rgba(37,99,235,0.3)]"
+                className="group inline-flex h-12 min-w-[142px] items-center justify-center gap-2 rounded-xl border border-violet-300 bg-violet-200 px-5 text-[14px] font-medium text-violet-950 shadow-[0_8px_24px_rgba(124,110,200,0.10)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-violet-300 dark:border-violet-400/25 dark:bg-violet-400/15 dark:text-violet-100 dark:hover:bg-violet-400/20"
               >
                 <span>Get Started</span>
                 <ArrowIcon />
@@ -185,39 +106,16 @@ export default function LandingHero() {
 
               <Link
                 href="/runs"
-                className="inline-flex h-12 min-w-[142px] items-center justify-center gap-2 rounded-xl border border-white/[0.09] bg-white/[0.025] px-5 text-[14px] font-medium text-zinc-300 transition-all duration-200 hover:border-white/[0.15] hover:bg-white/[0.045] hover:text-zinc-100"
+                className="inline-flex h-12 min-w-[142px] items-center justify-center gap-2 rounded-xl border border-[var(--beacon-border)] bg-[var(--beacon-surface)] px-5 text-[14px] font-medium text-[var(--beacon-text-secondary)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--beacon-border-strong)] hover:bg-[var(--beacon-surface-raised)] hover:text-[var(--beacon-text)]"
               >
-                <GithubIcon />
+                <RunsIcon />
                 <span>Explore runs</span>
               </Link>
             </div>
           </div>
 
-          {/* Product visualization */}
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "1180px",
-              marginInline: "auto",
-              marginTop: "clamp(80px, 8vw, 112px)",
-            }}
-          >
+          <div className="beacon-reveal beacon-reveal-5 mx-auto mt-[clamp(80px,8vw,112px)] w-full max-w-[1180px]">
             <HeroVisual />
-          </div>
-
-          {/* Section marker */}
-          <div
-            className="flex items-center justify-center text-[10px] uppercase tracking-[0.18em] text-zinc-600"
-            style={{
-              gap: "16px",
-              marginTop: "24px",
-            }}
-          >
-            <span className="h-px w-10 bg-white/[0.08]" />
-
-            Real-time execution visibility
-
-            <span className="h-px w-10 bg-white/[0.08]" />
           </div>
         </div>
       </LandingContainer>
