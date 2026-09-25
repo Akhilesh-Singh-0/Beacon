@@ -367,14 +367,14 @@ function NodeCard({ node }: { node: GraphNode }) {
     >
       {node.active && (
         <rect
-          x={node.x - node.width / 2 - 10}
-          y={node.y - node.height / 2 - 10}
-          width={node.width + 20}
-          height={node.height + 20}
-          rx="18"
+          x={node.x - node.width / 2 - 8}
+          y={node.y - node.height / 2 - 8}
+          width={node.width + 16}
+          height={node.height + 16}
+          rx="16"
           fill={color.glow}
-          className="opacity-[0.10] dark:opacity-[0.08]"
-          filter="blur(14px)"
+          className="opacity-[0.06] dark:opacity-[0.08]"
+          filter="blur(12px)"
         />
       )}
 
@@ -384,10 +384,10 @@ function NodeCard({ node }: { node: GraphNode }) {
         width={node.width}
         height={node.height}
         rx="12"
-        fill="var(--hero-node-surface)"
+        className="fill-[#F8F9FB] dark:fill-[#0D1117]"
         stroke={color.stroke}
-        strokeOpacity={node.active ? 0.78 : 0.58}
-        strokeWidth={node.active ? 1.5 : 1.05}
+        strokeOpacity={node.active ? 0.88 : 0.62}
+        strokeWidth={node.active ? 1.6 : 1.15}
       />
 
       {node.active && (
@@ -399,12 +399,11 @@ function NodeCard({ node }: { node: GraphNode }) {
           rx="12"
           fill="none"
           stroke={color.stroke}
-          strokeOpacity="0.5"
           strokeWidth="1"
         >
           <animate
             attributeName="stroke-opacity"
-            values="0.25;0.7;0.25"
+            values="0.3;0.8;0.3"
             dur="2.4s"
             repeatCount="indefinite"
           />
@@ -421,7 +420,7 @@ function NodeCard({ node }: { node: GraphNode }) {
       <text
         x={node.x - node.width / 2 + 30}
         y={node.y - 1}
-        className="fill-[var(--beacon-text)]"
+        className="fill-[#181819] dark:fill-zinc-200"
         fontSize="12"
         fontWeight="600"
         fontFamily="var(--font-geist-sans)"
@@ -432,7 +431,7 @@ function NodeCard({ node }: { node: GraphNode }) {
       <text
         x={node.x - node.width / 2 + 30}
         y={node.y + 17}
-        className="fill-[var(--beacon-text-muted)]"
+        className="fill-[#777675] dark:fill-zinc-500"
         fontSize="10"
         fontFamily="var(--font-geist-mono)"
       >
@@ -448,16 +447,13 @@ function AnimatedEdge({ path, delay, active = false }: GraphEdge) {
       <path
         d={path}
         fill="none"
-        stroke={
-          active
-            ? "var(--hero-edge-active)"
-            : "var(--hero-edge)"
-        }
-        strokeOpacity={active ? "0.62" : "0.38"}
-        strokeWidth={active ? "2" : "1.4"}
+        stroke={active ? "#6B9FF4" : "#B3BAC6"}
+        strokeOpacity={active ? "0.78" : "0.62"}
+        strokeWidth={active ? "2.1" : "1.4"}
         pathLength="1"
         strokeDasharray="1"
         strokeDashoffset="1"
+        className="dark:[stroke:#60A5FA] dark:opacity-70"
         style={{
           animation:
             "beacon-hero-edge-draw 780ms cubic-bezier(.22,1,.36,1) forwards",
@@ -467,11 +463,7 @@ function AnimatedEdge({ path, delay, active = false }: GraphEdge) {
 
       <circle
         r={active ? 4 : 3}
-        fill={
-          active
-            ? "var(--hero-edge-dot-active)"
-            : "var(--hero-edge-dot)"
-        }
+        fill={active ? "#5B9AF8" : "#9B82F5"}
         style={{
           opacity: 0,
           animation: "beacon-hero-particle-in 260ms ease forwards",
@@ -547,9 +539,10 @@ function MobileNode({
         width="470"
         height="58"
         rx="12"
-        fill="var(--hero-node-surface)"
+        className="fill-[#F8F9FB] dark:fill-[#0D1117]"
         stroke={config.stroke}
-        strokeOpacity="0.58"
+        strokeOpacity="0.65"
+        strokeWidth="1.15"
       />
 
       <circle
@@ -562,7 +555,7 @@ function MobileNode({
       <text
         x="184"
         y={y + 2}
-        className="fill-[var(--beacon-text)]"
+        className="fill-[#181819] dark:fill-zinc-200"
         fontSize="12"
         fontWeight="600"
         fontFamily="var(--font-geist-sans)"
@@ -573,7 +566,7 @@ function MobileNode({
       <text
         x="184"
         y={y + 19}
-        className="fill-[var(--beacon-text-muted)]"
+        className="fill-[#777675] dark:fill-zinc-500"
         fontSize="9.5"
         fontFamily="var(--font-geist-mono)"
       >
@@ -705,72 +698,101 @@ export default function HeroVisual() {
 
       <div
         aria-hidden="true"
-        className="absolute -inset-16 rounded-[80px] bg-blue-500/[0.025] blur-3xl dark:bg-blue-500/[0.04]"
+        className="absolute -inset-12 rounded-[70px] bg-blue-500/[0.025] blur-3xl dark:bg-blue-500/[0.04]"
       />
 
       <div
         className="
           relative overflow-hidden rounded-[24px]
-          border border-[#dededb]
-          bg-[#fbfbfa]
-          shadow-[0_24px_70px_rgba(24,24,24,0.08)]
+
+          border border-[#D8DADD]
+          bg-[#EEF0F3]
+          shadow-[0_24px_60px_rgba(24,24,24,0.09)]
 
           dark:border-white/[0.08]
           dark:bg-[#0A0F15]
           dark:shadow-[0_30px_100px_rgba(0,0,0,0.42)]
         "
-        style={
-          {
-            "--hero-node-surface": "#ffffff",
-            "--hero-edge-active": "#4F8EF7",
-            "--hero-edge": "#8E96A8",
-            "--hero-edge-dot-active": "#5B9AF8",
-            "--hero-edge-dot": "#A78BFA",
-          } as React.CSSProperties
-        }
       >
+        {/* Light-mode grid */}
         <div
           aria-hidden="true"
-          className="
-            absolute inset-0
-            bg-[radial-gradient(circle_at_50%_45%,rgba(37,99,235,0.055),transparent_38%)]
-            dark:bg-[radial-gradient(circle_at_50%_45%,rgba(37,99,235,0.10),transparent_38%)]
-          "
-        />
-
-        <div
-          aria-hidden="true"
-          className="
-            absolute inset-0
-            opacity-80
-            dark:opacity-50
-          "
+          className="absolute inset-0 opacity-100 dark:hidden"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(37,99,235,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(37,99,235,0.045) 1px, transparent 1px)",
+              "linear-gradient(rgba(110,118,132,0.055) 1px, transparent 1px), linear-gradient(90deg, rgba(110,118,132,0.055) 1px, transparent 1px)",
             backgroundSize: "36px 36px",
           }}
         />
 
-        <div className="relative border-b border-[#dededb] dark:border-white/[0.06]">
+        {/* Dark-mode atmosphere */}
+        <div
+          aria-hidden="true"
+          className="
+            pointer-events-none absolute inset-0 hidden
+            dark:block
+            dark:bg-[radial-gradient(circle_at_50%_45%,rgba(37,99,235,0.10),transparent_38%)]
+          "
+        />
+
+        {/* Dark-mode grid */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 hidden opacity-50 dark:block"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(96,165,250,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(96,165,250,0.04) 1px, transparent 1px)",
+            backgroundSize: "36px 36px",
+          }}
+        />
+
+        {/* Header */}
+        <div
+          className="
+            relative
+            border-b border-[#D5D7DA]
+            bg-[#E8EAED]/80
+
+            dark:border-white/[0.06]
+            dark:bg-[#0B1017]/55
+          "
+        >
           <div className="flex min-h-[64px] items-center justify-between px-4 sm:px-8">
             <div className="flex min-w-0 items-center gap-3">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-blue-500/25 bg-blue-500/[0.07] dark:border-blue-400/20 dark:bg-blue-400/[0.06]">
+              <div
+                className="
+                  flex h-8 w-8 shrink-0 items-center justify-center rounded-lg
+                  border border-blue-500/25
+                  bg-blue-500/[0.08]
+                  dark:border-blue-400/20
+                  dark:bg-blue-400/[0.06]
+                "
+              >
                 <span className="h-2 w-2 rounded-full bg-blue-400 shadow-[0_0_10px_rgba(96,165,250,0.65)]" />
               </div>
 
               <div className="min-w-0">
-                <p className="text-[11px] font-medium text-[var(--beacon-text-secondary)] sm:text-[12px] dark:text-zinc-400">
+                <p className="text-[11px] font-medium text-[#55585D] sm:text-[12px] dark:text-zinc-400">
                   Live execution
                 </p>
 
-                <p className="mt-0.5 truncate font-mono text-[9px] text-[var(--beacon-text-muted)] sm:text-[10px] dark:text-zinc-600">
+                <p className="mt-0.5 truncate font-mono text-[9px] text-[#858990] sm:text-[10px] dark:text-zinc-600">
                   run_01f8c2e7
                 </p>
               </div>
             </div>
 
-            <div className="flex shrink-0 items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/[0.06] px-3 py-1.5 dark:border-emerald-400/15 dark:bg-emerald-400/[0.05]">
+            <div
+              className="
+                flex shrink-0 items-center gap-2 rounded-full
+                border border-emerald-500/25
+                bg-emerald-500/[0.07]
+                px-3 py-1.5
+
+                dark:border-emerald-400/15
+                dark:bg-emerald-400/[0.05]
+              "
+            >
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.65)]" />
 
               <span className="text-[10px] font-medium text-emerald-600 sm:text-[11px] dark:text-emerald-300">
@@ -780,6 +802,7 @@ export default function HeroVisual() {
           </div>
         </div>
 
+        {/* Graph */}
         <div className="beacon-hero-graph relative beacon-hero-motion">
           <div className="hidden h-full w-full xl:block">
             <Graph
@@ -802,61 +825,79 @@ export default function HeroVisual() {
           </div>
         </div>
 
-        <div className="relative border-t border-[#dededb] dark:border-white/[0.06]">
+        {/* Footer */}
+        <div
+          className="
+            relative
+            border-t border-[#D5D7DA]
+            bg-[#E8EAED]/80
+
+            dark:border-white/[0.06]
+            dark:bg-[#0B1017]/55
+          "
+        >
           <div className="grid sm:grid-cols-[minmax(0,1fr)_auto]">
             <div className="min-w-0 px-4 py-5 sm:px-8">
               <div className="flex min-w-0 items-center gap-3">
-                <span className="shrink-0 font-mono text-[9px] text-[var(--beacon-text-muted)] dark:text-zinc-600">
+                <span className="shrink-0 font-mono text-[9px] text-[#858990] dark:text-zinc-600">
                   10:24:01
                 </span>
 
                 <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-blue-400" />
 
-                <span className="truncate font-mono text-[10px] text-[var(--beacon-text-secondary)] dark:text-zinc-400">
+                <span className="truncate font-mono text-[10px] text-[#5F6369] dark:text-zinc-400">
                   planner selected 4 execution paths
                 </span>
               </div>
 
               <div className="mt-2 flex min-w-0 items-center gap-3">
-                <span className="shrink-0 font-mono text-[9px] text-[var(--beacon-text-muted)] dark:text-zinc-600">
+                <span className="shrink-0 font-mono text-[9px] text-[#858990] dark:text-zinc-600">
                   10:24:03
                 </span>
 
                 <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400" />
 
-                <span className="truncate font-mono text-[10px] text-[var(--beacon-text-muted)] dark:text-zinc-500">
+                <span className="truncate font-mono text-[10px] text-[#73777D] dark:text-zinc-500">
                   llm call completed successfully
                 </span>
               </div>
             </div>
 
-            <div className="grid min-w-0 grid-cols-3 border-t border-[#dededb] sm:border-l sm:border-t-0 dark:border-white/[0.06]">
+            <div
+              className="
+                grid min-w-0 grid-cols-3
+                border-t border-[#D5D7DA]
+                sm:border-l sm:border-t-0
+
+                dark:border-white/[0.06]
+              "
+            >
               <div className="min-w-0 px-4 py-5 sm:px-5">
-                <p className="truncate text-[9px] uppercase tracking-[0.12em] text-[var(--beacon-text-muted)] dark:text-zinc-600">
+                <p className="truncate text-[9px] uppercase tracking-[0.12em] text-[#858990] dark:text-zinc-600">
                   Nodes
                 </p>
 
-                <p className="mt-1 text-[16px] font-medium tabular-nums text-[var(--beacon-text)] sm:text-[18px] dark:text-zinc-300">
+                <p className="mt-1 text-[16px] font-medium tabular-nums text-[#24262A] sm:text-[18px] dark:text-zinc-300">
                   10
                 </p>
               </div>
 
-              <div className="min-w-0 border-l border-[#dededb] px-4 py-5 sm:px-5 dark:border-white/[0.06]">
-                <p className="truncate text-[9px] uppercase tracking-[0.12em] text-[var(--beacon-text-muted)] dark:text-zinc-600">
+              <div className="min-w-0 border-l border-[#D5D7DA] px-4 py-5 sm:px-5 dark:border-white/[0.06]">
+                <p className="truncate text-[9px] uppercase tracking-[0.12em] text-[#858990] dark:text-zinc-600">
                   Edges
                 </p>
 
-                <p className="mt-1 text-[16px] font-medium tabular-nums text-[var(--beacon-text)] sm:text-[18px] dark:text-zinc-300">
+                <p className="mt-1 text-[16px] font-medium tabular-nums text-[#24262A] sm:text-[18px] dark:text-zinc-300">
                   9
                 </p>
               </div>
 
-              <div className="min-w-0 border-l border-[#dededb] px-4 py-5 sm:px-5 dark:border-white/[0.06]">
-                <p className="truncate text-[9px] uppercase tracking-[0.12em] text-[var(--beacon-text-muted)] dark:text-zinc-600">
+              <div className="min-w-0 border-l border-[#D5D7DA] px-4 py-5 sm:px-5 dark:border-white/[0.06]">
+                <p className="truncate text-[9px] uppercase tracking-[0.12em] text-[#858990] dark:text-zinc-600">
                   Latency
                 </p>
 
-                <p className="mt-1 whitespace-nowrap text-[16px] font-medium tabular-nums text-[var(--beacon-text)] sm:text-[18px] dark:text-zinc-300">
+                <p className="mt-1 whitespace-nowrap text-[16px] font-medium tabular-nums text-[#24262A] sm:text-[18px] dark:text-zinc-300">
                   842ms
                 </p>
               </div>

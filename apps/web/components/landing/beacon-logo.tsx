@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import beaconIcon from "@/app/beacon-icon.svg";
+import beaconIcon from "@/app/icon.png";
 
 type BeaconLogoProps = {
   href?: string;
@@ -38,24 +38,17 @@ export default function BeaconLogo({
       aria-label="Beacon home"
       className={`group inline-flex items-center ${config.gap}`}
     >
-      <span className="relative flex shrink-0 items-center justify-center">
-        <Image
-          src={beaconIcon}
-          alt=""
-          width={config.icon}
-          height={config.icon}
-          priority
-          className="object-contain transition-transform duration-300 ease-out group-hover:scale-[1.04]"
-        />
-
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-1 rounded-full bg-blue-400/10 opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-100"
-        />
-      </span>
+      <Image
+        src={beaconIcon}
+        alt=""
+        width={config.icon}
+        height={config.icon}
+        priority
+        className="shrink-0 object-contain transition-transform duration-300 ease-out group-hover:scale-[1.04]"
+      />
 
       <span
-        className={`${config.text} font-semibold leading-none tracking-[-0.02em] text-zinc-100 transition-colors duration-200 group-hover:text-white`}
+        className={`${config.text} font-semibold leading-none tracking-[-0.02em] text-[var(--beacon-text)]`}
       >
         Beacon
       </span>

@@ -11,14 +11,7 @@ export default function LandingContainer({
 }: LandingContainerProps) {
   return (
     <div
-      className={className}
-      style={{
-        width: "100%",
-        maxWidth: "1440px",
-        marginInline: "auto",
-        paddingInline: "clamp(16px, 3vw, 32px)",
-        boxSizing: "border-box",
-      }}
+      className={`mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-10 ${className}`}
     >
       {children}
     </div>

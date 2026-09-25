@@ -1,16 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Geist } from "next/font/google";
 
 import "./globals.css";
-
-import { cn } from "@/lib/utils";
-
-const geist = Geist({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -36,14 +28,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn(
-        "font-sans",
-        geist.variable,
-      )}
+      className={geistSans.variable}
     >
-      <body
-        className={`${geistSans.variable} ${geistMono.variable}`}
-      >
+      <body className={geistMono.variable}>
         <ClerkProvider>
           {children}
         </ClerkProvider>

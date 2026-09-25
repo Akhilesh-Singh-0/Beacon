@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 
-import beaconIcon from "@/app/beacon-icon.svg";
+import beaconIcon from "@/app/icon.png";
 
 type Run = {
   id: string;
