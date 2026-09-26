@@ -710,7 +710,7 @@ canvas {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Scroll reveal                                                             */
+/* Scroll reveal                                                              */
 /* -------------------------------------------------------------------------- */
 
 .beacon-scroll-reveal {
@@ -751,6 +751,181 @@ canvas {
 
 .beacon-scroll-reveal-scale.beacon-scroll-reveal-visible {
   transform: scale(1);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Clerk auth                                                                  */
+/* -------------------------------------------------------------------------- */
+
+/*
+ * Clerk's footer can otherwise inherit its own background color.
+ * Keep the entire authentication card visually consistent with Beacon.
+ */
+
+.cl-cardBox {
+  background: transparent !important;
+}
+
+.cl-card {
+  background: var(--beacon-surface) !important;
+  color: var(--beacon-text) !important;
+}
+
+.cl-footer {
+  background: var(--beacon-surface) !important;
+  border-top: 1px solid var(--beacon-border) !important;
+  color: var(--beacon-text-secondary) !important;
+}
+
+.cl-footerAction {
+  background: var(--beacon-surface) !important;
+}
+
+.cl-footerActionText {
+  color: var(--beacon-text-secondary) !important;
+}
+
+.cl-footerActionLink {
+  color: var(--beacon-info) !important;
+}
+
+.cl-footerPages {
+  background: var(--beacon-surface) !important;
+}
+
+.cl-footerPagesLink {
+  color: var(--beacon-text-secondary) !important;
+}
+
+.cl-formButtonPrimary {
+  background: #756dc4 !important;
+  border: 1px solid #6961b7 !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+  box-shadow: 0 8px 24px rgba(105, 97, 183, 0.20) !important;
+}
+
+.cl-formButtonPrimary:hover {
+  background: #6961b7 !important;
+  border-color: #5f57aa !important;
+}
+
+.cl-formButtonPrimary:disabled {
+  background: #756dc4 !important;
+  border-color: #6961b7 !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+  box-shadow: 0 8px 22px rgba(105, 97, 183, 0.18) !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Clerk auth — dark mode                                                     */
+/* -------------------------------------------------------------------------- */
+
+.dark .cl-card {
+  background: #101113 !important;
+  color: #e2e2e4 !important;
+  border-color: #202021 !important;
+}
+
+.dark .cl-headerTitle {
+  color: #e2e2e4 !important;
+}
+
+.dark .cl-headerSubtitle {
+  color: #a5a6a7 !important;
+}
+
+.dark .cl-socialButtonsBlockButton {
+  background: #101113 !important;
+  border-color: #202021 !important;
+  color: #e2e2e4 !important;
+}
+
+.dark .cl-socialButtonsBlockButtonText {
+  color: #e2e2e4 !important;
+}
+
+.dark .cl-dividerLine {
+  background: #202021 !important;
+}
+
+.dark .cl-dividerText {
+  color: #777675 !important;
+}
+
+.dark .cl-formFieldLabel {
+  color: #e2e2e4 !important;
+}
+
+.dark .cl-formFieldInput {
+  background: #050609 !important;
+  border-color: #202021 !important;
+  color: #e2e2e4 !important;
+}
+
+.dark .cl-formFieldInput::placeholder {
+  color: #777675 !important;
+}
+
+.dark .cl-formFieldInput:focus {
+  border-color: #3b82f6 !important;
+}
+
+.dark .cl-formFieldAction {
+  color: #8d86d8 !important;
+}
+
+.dark .cl-formButtonPrimary {
+  background: #756dc4 !important;
+  border-color: #6961b7 !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+  box-shadow: 0 8px 24px rgba(105, 97, 183, 0.22) !important;
+}
+
+.dark .cl-formButtonPrimary:hover {
+  background: #6961b7 !important;
+  border-color: #5f57aa !important;
+}
+
+.dark .cl-formButtonPrimary:disabled {
+  background: #756dc4 !important;
+  border-color: #6961b7 !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+.dark .cl-footer {
+  background: #101113 !important;
+  border-top-color: #202021 !important;
+  color: #a5a6a7 !important;
+}
+
+.dark .cl-footerAction {
+  background: #101113 !important;
+}
+
+.dark .cl-footerActionText {
+  color: #a5a6a7 !important;
+}
+
+.dark .cl-footerActionLink {
+  color: #8d86d8 !important;
+}
+
+.dark .cl-footerPages {
+  background: #101113 !important;
+}
+
+.dark .cl-footerPagesLink {
+  color: #a5a6a7 !important;
+}
+
+.dark .cl-alert {
+  background: #18191a !important;
+  border-color: #202021 !important;
+  color: #e2e2e4 !important;
 }
 
 /* -------------------------------------------------------------------------- */
