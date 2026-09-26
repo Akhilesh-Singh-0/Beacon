@@ -97,20 +97,33 @@
   --beacon-bg: #f3f3f1;
   --beacon-surface: #fafaf9;
   --beacon-surface-raised: #eeeeec;
-
   --beacon-border: #dededb;
   --beacon-border-strong: #d2d2cf;
-
   --beacon-text: #181819;
   --beacon-text-secondary: #666665;
   --beacon-text-muted: #8a8987;
   --beacon-text-subtle: #b5b4b1;
-
   --beacon-primary: #2563eb;
   --beacon-success: #159570;
   --beacon-warning: #b87925;
   --beacon-error: #b63c50;
   --beacon-info: #7169b7;
+
+  --app-bg: #f3f3f1;
+  --app-surface: #fafaf9;
+  --app-surface-raised: #eeeeec;
+  --app-border: #dededb;
+  --app-border-strong: #d2d2cf;
+  --app-text: #181819;
+  --app-text-secondary: #666665;
+  --app-text-muted: #8a8987;
+  --app-text-subtle: #b5b4b1;
+  --app-primary: #2563eb;
+  --app-success: #159570;
+  --app-warning: #b87925;
+  --app-error: #b63c50;
+  --app-violet: #7169b7;
+  --app-shadow: rgba(24, 24, 24, 0.06);
 }
 
 .dark {
@@ -159,20 +172,33 @@
   --beacon-bg: #050609;
   --beacon-surface: #101113;
   --beacon-surface-raised: #18191a;
-
   --beacon-border: #202021;
   --beacon-border-strong: #2b2a2b;
-
   --beacon-text: #e2e2e4;
   --beacon-text-secondary: #a5a6a7;
   --beacon-text-muted: #777675;
   --beacon-text-subtle: #3c3738;
-
   --beacon-primary: #3b82f6;
   --beacon-success: #19c79a;
   --beacon-warning: #d99a45;
   --beacon-error: #b83c52;
   --beacon-info: #8d86d8;
+
+  --app-bg: #050609;
+  --app-surface: #101113;
+  --app-surface-raised: #18191a;
+  --app-border: #202021;
+  --app-border-strong: #2b2a2b;
+  --app-text: #e2e2e4;
+  --app-text-secondary: #a5a6a7;
+  --app-text-muted: #777675;
+  --app-text-subtle: #3c3738;
+  --app-primary: #3b82f6;
+  --app-success: #19c79a;
+  --app-warning: #d99a45;
+  --app-error: #b83c52;
+  --app-violet: #8d86d8;
+  --app-shadow: rgba(0, 0, 0, 0.22);
 }
 
 html {
@@ -232,10 +258,6 @@ canvas {
   color: var(--foreground);
 }
 
-/* -------------------------------------------------------------------------- */
-/* Theme image helpers                                                        */
-/* -------------------------------------------------------------------------- */
-
 .imgDark {
   display: none;
 }
@@ -251,10 +273,6 @@ canvas {
 .dark .imgDark {
   display: unset;
 }
-
-/* -------------------------------------------------------------------------- */
-/* React Flow                                                                  */
-/* -------------------------------------------------------------------------- */
 
 .react-flow {
   background: transparent !important;
@@ -319,10 +337,6 @@ canvas {
     color-mix(in srgb, var(--beacon-primary) 55%, transparent) !important;
   outline-offset: -2px;
 }
-
-/* -------------------------------------------------------------------------- */
-/* Beacon core                                                                */
-/* -------------------------------------------------------------------------- */
 
 .beacon-core {
   isolation: isolate;
@@ -435,10 +449,6 @@ canvas {
   }
 }
 
-/* -------------------------------------------------------------------------- */
-/* Workflow animations                                                        */
-/* -------------------------------------------------------------------------- */
-
 .workflow-trace {
   animation: beacon-trace-move 2.8s ease-in-out infinite;
 }
@@ -508,10 +518,6 @@ canvas {
     transform: translateX(300px);
   }
 }
-
-/* -------------------------------------------------------------------------- */
-/* Telemetry animations                                                       */
-/* -------------------------------------------------------------------------- */
 
 .telemetry-status-dot {
   animation: telemetry-status-pulse 2s ease-in-out infinite;
@@ -669,10 +675,6 @@ canvas {
   }
 }
 
-/* -------------------------------------------------------------------------- */
-/* Initial landing reveal                                                     */
-/* -------------------------------------------------------------------------- */
-
 .beacon-reveal {
   animation: beacon-reveal 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -708,10 +710,6 @@ canvas {
     transform: translateY(0);
   }
 }
-
-/* -------------------------------------------------------------------------- */
-/* Scroll reveal                                                              */
-/* -------------------------------------------------------------------------- */
 
 .beacon-scroll-reveal {
   opacity: 0;
@@ -753,15 +751,6 @@ canvas {
   transform: scale(1);
 }
 
-/* -------------------------------------------------------------------------- */
-/* Clerk auth                                                                  */
-/* -------------------------------------------------------------------------- */
-
-/*
- * Clerk's footer can otherwise inherit its own background color.
- * Keep the entire authentication card visually consistent with Beacon.
- */
-
 .cl-cardBox {
   background: transparent !important;
 }
@@ -802,7 +791,7 @@ canvas {
   border: 1px solid #6961b7 !important;
   color: #ffffff !important;
   opacity: 1 !important;
-  box-shadow: 0 8px 24px rgba(105, 97, 183, 0.20) !important;
+  box-shadow: 0 8px 24px rgba(105, 97, 183, 0.2) !important;
 }
 
 .cl-formButtonPrimary:hover {
@@ -817,10 +806,6 @@ canvas {
   opacity: 1 !important;
   box-shadow: 0 8px 22px rgba(105, 97, 183, 0.18) !important;
 }
-
-/* -------------------------------------------------------------------------- */
-/* Clerk auth — dark mode                                                     */
-/* -------------------------------------------------------------------------- */
 
 .dark .cl-card {
   background: #101113 !important;
@@ -928,9 +913,50 @@ canvas {
   color: #e2e2e4 !important;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Responsive                                                                 */
-/* -------------------------------------------------------------------------- */
+.dark .cl-userButtonPopoverCard {
+  background: #101113 !important;
+  border-color: #202021 !important;
+  color: #e2e2e4 !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35) !important;
+}
+
+.dark .cl-userButtonPopoverMain {
+  background: #101113 !important;
+}
+
+.dark .cl-userPreview {
+  background: #101113 !important;
+  border-color: #202021 !important;
+}
+
+.dark .cl-userPreviewMainIdentifier {
+  color: #e2e2e4 !important;
+}
+
+.dark .cl-userPreviewSecondaryIdentifier {
+  color: #a5a6a7 !important;
+}
+
+.dark .cl-userButtonPopoverActionButton {
+  color: #e2e2e4 !important;
+}
+
+.dark .cl-userButtonPopoverActionButton:hover {
+  background: #18191a !important;
+}
+
+.dark .cl-userButtonPopoverActionButtonIcon {
+  color: #a5a6a7 !important;
+}
+
+.dark .cl-userButtonPopoverFooter {
+  background: #101113 !important;
+  border-top-color: #202021 !important;
+}
+
+.dark .cl-userButtonPopoverFooterAction {
+  color: #a5a6a7 !important;
+}
 
 @media (max-width: 640px) {
   .telemetry-entry {
@@ -942,10 +968,6 @@ canvas {
     margin-left: 12px;
   }
 }
-
-/* -------------------------------------------------------------------------- */
-/* Reduced motion                                                             */
-/* -------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
   *,
