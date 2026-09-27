@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 
 import {
   Controls,
@@ -219,9 +219,9 @@ export default function DagCanvas({
                 ? 0
                 : 1,
 
-              pointerEvents: hidden
-                ? "none"
-                : "auto",
+                pointerEvents: hidden
+                  ? ("none" as CSSProperties["pointerEvents"])
+                  : ("auto" as CSSProperties["pointerEvents"]),
 
               transition:
                 "opacity 240ms ease",

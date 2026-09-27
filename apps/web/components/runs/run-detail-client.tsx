@@ -14,21 +14,12 @@ import type {
 
 import DagCanvas from "@/components/dag/dag-canvas";
 import { DagReplay } from "@/components/dag/dag-replay";
+import type { DagNodeData } from "@/components/dag/dag-config";
 import AppThemeToggle from "@/components/theme/app-theme-toggle";
 import { useDagWebSocket } from "@/hooks/use-dag-websocket";
 
 type RunDetailClientProps = {
   runId: string;
-};
-
-type DagNodeData = {
-  name?: string;
-  status?: string;
-  startTime?: string | number | Date;
-  endTime?: string | number | Date | null;
-  totalTokens?: number | null;
-  attributes?: Record<string, unknown> | null;
-  [key: string]: unknown;
 };
 
 const CONNECTION_STYLE = {
@@ -342,7 +333,7 @@ export default function RunDetailClient({
   const [
     replayNodes,
     setReplayNodes,
-  ] = useState<Node[]>([]);
+  ] = useState<Node<DagNodeData>[]>([]);
 
   const [
     replayEdges,

@@ -3,6 +3,7 @@
 import {
   Handle,
   Position,
+  type Node,
   type NodeProps,
 } from "@xyflow/react";
 
@@ -12,11 +13,7 @@ import {
   type DagNodeData,
 } from "./dag-config";
 
-type DagNode = {
-  id: string;
-  type: "dagNode";
-  data: DagNodeData;
-};
+type DagNode = Node<DagNodeData, "dagNode">;
 
 const NODE_STYLES = {
   handle:

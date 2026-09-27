@@ -71,8 +71,11 @@ export function layoutDag(
   let cursor = 0;
 
   while (cursor < queue.length) {
-    const currentId =
-      queue[cursor];
+    const currentId = queue[cursor];
+
+    if (!currentId) {
+      continue;
+    }
 
     cursor += 1;
 

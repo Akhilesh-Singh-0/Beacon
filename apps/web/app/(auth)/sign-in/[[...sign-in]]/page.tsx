@@ -11,11 +11,9 @@ export default function SignInPage() {
         appearance={{
           variables: {
             colorPrimary: "#8d86d8",
-            colorText: "var(--beacon-text)",
-            colorTextSecondary: "var(--beacon-text-secondary)",
             colorBackground: "transparent",
-            colorInputBackground: "var(--beacon-bg)",
-            colorInputText: "var(--beacon-text)",
+            colorInput: "var(--beacon-bg)",
+            colorInputForeground: "var(--beacon-text)",
             borderRadius: "0.75rem",
             fontFamily: "var(--font-geist-sans)",
           },

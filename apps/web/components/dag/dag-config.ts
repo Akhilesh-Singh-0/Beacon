@@ -9,6 +9,9 @@ export type DagNodeData = {
   name: string;
   status: NodeStatus;
   duration?: string;
+  startTime?: string;
+  endTime?: string | number | Date | null;
+  totalTokens?: number | null;
 };
 
 export type DagEdgeData = {
