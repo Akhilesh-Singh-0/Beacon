@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Node" ADD COLUMN     "totalToken" INTEGER NOT NULL DEFAULT 0;
