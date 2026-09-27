@@ -1,5 +1,5 @@
 import { Worker } from "bullmq";
-import { NodeStatus, Prisma } from "../generated/prisma";
+import { NodeStatus, Prisma } from "../../generated/prisma";
 import { prisma } from "../lib/prisma";
 import { redis } from "../lib/redis";
 import type { IngestionPayload } from "../modules/ingestion/ingestion.schema";

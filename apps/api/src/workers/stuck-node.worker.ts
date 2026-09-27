@@ -1,5 +1,5 @@
 import { Queue, Worker } from "bullmq";
-import { NodeStatus } from "../generated/prisma";
+import { NodeStatus } from "../../generated/prisma";
 import { prisma } from "../lib/prisma";
 import { redis } from "../lib/redis";
 
