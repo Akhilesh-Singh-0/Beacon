@@ -1,5 +1,5 @@
 import { randomBytes } from "node:crypto";
-import { Role } from "../../generated/prisma";
+import { Role } from "../../../generated/prisma";
 import { prisma } from "../../lib/prisma";
 
 type CreateAuthUserInput = {
