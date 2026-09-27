@@ -152,7 +152,7 @@ export const spanWorker = new Worker<SpanJobData>(
       } catch (err: unknown) {
         if (
           err instanceof Prisma.PrismaClientKnownRequestError &&
-          err.code === "P2002"
+          (err as Prisma.PrismaClientKnownRequestError).code === "P2002"
         ) {
           console.warn("Edge already exists, skipping", {
             runId: run.id,
@@ -216,7 +216,7 @@ export const spanWorker = new Worker<SpanJobData>(
     } catch (err: unknown) {
       if (
         err instanceof Prisma.PrismaClientKnownRequestError &&
-        err.code === "P2002"
+        (err as Prisma.PrismaClientKnownRequestError).code === "P2002"
       ) {
         console.warn("Edge already exists, skipping", {
           parentSpanId,

@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { redis } from "./plugins/redis";
+import { redis } from "./lib/redis";
 import { closeSpanQueue } from "./queues/span.queue";
 
 let shuttingDown = false;
