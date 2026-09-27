@@ -18,7 +18,10 @@ const app = Fastify({
 });
 
 app.register(cors, {
-  origin: "http://localhost:3000",
+  origin: [
+    "http://localhost:3000",
+    "https://beacon-web-mu.vercel.app",
+  ],
 });
 app.register(healthPlugin);
 app.register(errorHandler);

@@ -26,6 +26,7 @@ export async function getMeController(request: FastifyRequest, reply: FastifyRep
             secretKey: env.CLERK_SECRET_KEY,
             authorizedParties: [
                 "http://localhost:3000",
+                "https://beacon-web-mu.vercel.app",
             ],
         });
         console.log("verifiedToken:", verifiedToken);
