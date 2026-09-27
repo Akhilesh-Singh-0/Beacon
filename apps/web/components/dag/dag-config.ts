@@ -46,24 +46,25 @@ export const DAG_NODE = {
   paddingX: 20,
   paddingY: 16,
 
-  background: "#101A24",
+  background:
+    "var(--app-surface)",
 
   borderRadius: 13,
 
   baseBorder:
-    "rgba(148,163,184,0.16)",
+    "var(--app-border)",
 
   selectedBorder:
     "rgba(96,165,250,0.92)",
 
   shadow:
-    "0 18px 42px rgba(0,0,0,0.42)",
+    "0 18px 42px var(--app-shadow)",
 
   selectedShadow:
-    "0 0 32px rgba(96,165,250,0.18), 0 18px 42px rgba(0,0,0,0.42)",
+    "0 0 32px rgba(96,165,250,0.18), 0 18px 42px var(--app-shadow)",
 
   topHighlight:
-    "linear-gradient(90deg, transparent, rgba(255,255,255,0.13), transparent)",
+    "linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent)",
 
   bottomGlow:
     "linear-gradient(90deg, transparent, rgba(96,165,250,0.12), transparent)",
@@ -99,7 +100,6 @@ type StatusVisualConfig = {
   label: string;
   indicator: string;
   border: string;
-  surface: string;
   glow: string;
 
   edge: {
@@ -123,11 +123,8 @@ export const DAG_STATUS_CONFIG: Record<
     border:
       "rgba(148,163,184,0.42)",
 
-    surface:
-      "linear-gradient(135deg, rgba(21,32,44,0.98), rgba(12,19,27,0.99))",
-
     glow:
-      "shadow-[0_16px_38px_rgba(0,0,0,0.34)]",
+      "shadow-[0_16px_38px_var(--app-shadow)]",
 
     edge: {
       color: DAG_EDGE.color,
@@ -148,11 +145,8 @@ export const DAG_STATUS_CONFIG: Record<
     border:
       "rgba(96,165,250,0.72)",
 
-    surface:
-      "linear-gradient(135deg, rgba(17,32,49,0.99), rgba(10,18,27,0.99))",
-
     glow:
-      "shadow-[0_0_28px_rgba(59,130,246,0.12),0_16px_38px_rgba(0,0,0,0.34)]",
+      "shadow-[0_0_28px_rgba(59,130,246,0.12),0_16px_38px_var(--app-shadow)]",
 
     edge: {
       color:
@@ -174,11 +168,8 @@ export const DAG_STATUS_CONFIG: Record<
     border:
       "rgba(52,211,153,0.58)",
 
-    surface:
-      "linear-gradient(135deg, rgba(14,31,34,0.99), rgba(10,19,25,0.99))",
-
     glow:
-      "shadow-[0_0_22px_rgba(16,185,129,0.045),0_16px_38px_rgba(0,0,0,0.36)]",
+      "shadow-[0_0_22px_rgba(16,185,129,0.045),0_16px_38px_var(--app-shadow)]",
 
     edge: {
       color: DAG_EDGE.color,
@@ -199,11 +190,8 @@ export const DAG_STATUS_CONFIG: Record<
     border:
       "rgba(248,113,113,0.72)",
 
-    surface:
-      "linear-gradient(135deg, rgba(39,24,30,0.99), rgba(15,16,22,0.99))",
-
     glow:
-      "shadow-[0_0_28px_rgba(239,68,68,0.10),0_16px_38px_rgba(0,0,0,0.36)]",
+      "shadow-[0_0_28px_rgba(239,68,68,0.10),0_16px_38px_var(--app-shadow)]",
 
     edge: {
       color: DAG_EDGE.color,
@@ -224,11 +212,8 @@ export const DAG_STATUS_CONFIG: Record<
     border:
       "rgba(251,191,36,0.72)",
 
-    surface:
-      "linear-gradient(135deg, rgba(38,31,20,0.99), rgba(17,17,21,0.99))",
-
     glow:
-      "shadow-[0_0_28px_rgba(245,158,11,0.09),0_16px_38px_rgba(0,0,0,0.36)]",
+      "shadow-[0_0_28px_rgba(245,158,11,0.09),0_16px_38px_var(--app-shadow)]",
 
     edge: {
       color: DAG_EDGE.color,

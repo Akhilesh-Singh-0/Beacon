@@ -219,6 +219,100 @@ body {
   color: var(--foreground);
 }
 
+body {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(
+      circle 34vw at 8% 8%,
+      rgba(96, 165, 250, 0.085),
+      transparent 68%
+    ),
+    radial-gradient(
+      circle 30vw at 92% 88%,
+      rgba(139, 92, 246, 0.065),
+      transparent 70%
+    ),
+    radial-gradient(
+      circle 26vw at 82% 18%,
+      rgba(52, 211, 153, 0.045),
+      transparent 72%
+    ),
+    var(--background);
+  background-attachment: fixed;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 9999px;
+  will-change: transform;
+}
+
+body::before {
+  top: -16vw;
+  left: -10vw;
+  width: 44vw;
+  height: 44vw;
+  background: radial-gradient(
+    circle,
+    rgba(96, 165, 250, 0.09) 0%,
+    rgba(96, 165, 250, 0.035) 38%,
+    transparent 72%
+  );
+  filter: blur(80px);
+  animation: beacon-ambient-blue 30s ease-in-out infinite;
+}
+
+body::after {
+  right: -12vw;
+  bottom: -18vw;
+  width: 42vw;
+  height: 42vw;
+  background: radial-gradient(
+    circle,
+    rgba(139, 92, 246, 0.07) 0%,
+    rgba(52, 211, 153, 0.03) 40%,
+    transparent 74%
+  );
+  filter: blur(90px);
+  animation: beacon-ambient-violet 34s ease-in-out infinite;
+}
+
+@keyframes beacon-ambient-blue {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(6vw, 4vh, 0) scale(1.08);
+  }
+}
+
+@keyframes beacon-ambient-violet {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(-5vw, -4vh, 0) scale(1.06);
+  }
+}
+
+.dark body {
+  background: var(--background);
+}
+
+.dark body::before,
+.dark body::after {
+  display: none;
+}
+
 *,
 *::before,
 *::after {
@@ -977,6 +1071,11 @@ canvas {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  body::before,
+  body::after {
+    animation: none !important;
   }
 
   .beacon-core::before,

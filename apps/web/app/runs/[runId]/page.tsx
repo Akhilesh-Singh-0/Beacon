@@ -12,7 +12,7 @@ export default async function RunDetailPage({
   const { runId } = await params;
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-[#0a0a0a]">
+    <div className="h-screen overflow-y-auto bg-[var(--app-bg)]">
       <RunDetailClient runId={runId} />
     </div>
   );

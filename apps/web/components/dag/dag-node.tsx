@@ -23,7 +23,7 @@ const NODE_STYLES = {
     "!top-1/2 !h-1 !w-1 !-translate-y-1/2 !border-0 !bg-transparent !opacity-0 !pointer-events-none",
 
   name:
-    "truncate text-[14px] font-semibold leading-5 tracking-[-0.01em] text-zinc-100",
+    "truncate text-[14px] font-semibold leading-5 tracking-[-0.01em] text-[var(--app-text)]",
 
   statusRow:
     "mt-2 flex items-center gap-2",
@@ -32,10 +32,10 @@ const NODE_STYLES = {
     "h-2 w-2 shrink-0 rounded-full",
 
   statusText:
-    "text-[12px] font-medium leading-4 text-zinc-300",
+    "text-[12px] font-medium leading-4 text-[var(--app-text-secondary)]",
 
   duration:
-    "shrink-0 font-mono text-[11px] font-medium leading-4 tabular-nums text-zinc-400",
+    "shrink-0 font-mono text-[11px] font-medium leading-4 tabular-nums text-[var(--app-text-muted)]",
 } as const;
 
 function getStatusGlow(
@@ -122,7 +122,7 @@ export default function DagNode({
             DAG_NODE.borderRadius,
 
           background:
-            config.surface,
+            DAG_NODE.background,
 
           border: `1px solid ${
             selected

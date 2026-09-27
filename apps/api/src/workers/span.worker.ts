@@ -115,7 +115,6 @@ export const spanWorker = new Worker<SpanJobData>(
       }),
     );
 
-    // Reconcile children that arrived before this parent node.
     const childNodes = await prisma.node.findMany({
       where: {
         runId: run.id,
