@@ -5,6 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 
 import AppThemeToggle from "@/components/theme/app-theme-toggle";
 import LiveObservability from "@/components/runs/live-observability";
+import RunHistoryRefresh from "@/components/runs/run-history-refresh";
 import beaconIcon from "@/app/icon.png";
 
 type Run = {
@@ -398,6 +399,8 @@ export default async function RunsPage() {
 
   return (
     <main className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] transition-colors duration-200">
+      <RunHistoryRefresh />
+
       <header className="h-[76px] border-b border-[var(--app-border)]">
         <div className="mx-auto flex h-full w-full max-w-[1520px] items-center justify-between px-6 lg:px-10">
           <Link
