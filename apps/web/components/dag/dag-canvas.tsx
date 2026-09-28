@@ -84,38 +84,34 @@ function getEdgeStatus(
 
 function DagViewportController({
   enabled,
+  nodeCount,
+  edgeCount,
 }: {
   enabled: boolean;
+  nodeCount: number;
+  edgeCount: number;
 }) {
   const { fitView } = useReactFlow();
-
-  const nodesInitialized =
-    useNodesInitialized();
+  const nodesInitialized = useNodesInitialized();
 
   useEffect(() => {
-    if (
-      !enabled ||
-      !nodesInitialized
-    ) {
-      return;
-    }
+    if (!enabled || !nodesInitialized) return;
 
-    const frame =
-      requestAnimationFrame(() => {
-        void fitView({
-          padding: 0.2,
-          minZoom: 0.35,
-          maxZoom: 1.15,
-          duration: 350,
-        });
+    const frame = requestAnimationFrame(() => {
+      void fitView({
+        padding: 0.2,
+        minZoom: DAG_CANVAS.zoom.min,
+        maxZoom: 1.15,
+        duration: 350,
       });
+    });
 
-    return () => {
-      cancelAnimationFrame(frame);
-    };
+    return () => cancelAnimationFrame(frame);
   }, [
     enabled,
     nodesInitialized,
+    nodeCount,
+    edgeCount,
     fitView,
   ]);
 
@@ -383,7 +379,7 @@ export default function DagCanvas({
           fitView
           fitViewOptions={{
             padding: 0.18,
-            minZoom: 0.35,
+            minZoom: DAG_CANVAS.zoom.min,
             maxZoom: 1.15,
             duration: 0,
           }}
@@ -414,9 +410,9 @@ export default function DagCanvas({
           }}
         >
           <DagViewportController
-            enabled={
-              fitViewOnChange
-            }
+            enabled={fitViewOnChange}
+            nodeCount={graphNodes.length}
+            edgeCount={graphEdges.length}
           />
 
           <Controls
