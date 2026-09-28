@@ -193,6 +193,12 @@ export default function OnboardingPage() {
   const [copied, setCopied] =
     useState<string | null>(null);
 
+  const [regenerating, setRegenerating] =
+    useState(false);
+
+  const [showRegenerateConfirm, setShowRegenerateConfirm] =
+    useState(false);
+
   const [stack, setStack] =
     useState<Stack>("node");
 
@@ -263,6 +269,57 @@ export default function OnboardingPage() {
     setTimeout(() => {
       setCopied(null);
     }, 2000);
+  }
+
+  async function handleRegenerateApiKey() {
+    if (regenerating) return false;
+
+    setRegenerating(true);
+
+    try {
+      const token = await getToken();
+
+      if (!token) {
+        throw new Error("Could not get Clerk token");
+      }
+
+      const response = await fetch(
+        `${API_URL}/api/me/api-key/regenerate`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          "Failed to regenerate API key",
+        );
+      }
+
+      const result =
+        (await response.json()) as {
+          apiKey: string;
+        };
+
+      setData((current) =>
+        current
+          ? {
+              ...current,
+              apiKey: result.apiKey,
+            }
+          : current,
+      );
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    } finally {
+      setRegenerating(false);
+    }
   }
 
   if (loading) {
@@ -417,14 +474,29 @@ opentelemetry-instrument python app.py`;
 
             <div className="mt-8 space-y-7">
               <section>
-                <h2 className="text-[14px] font-semibold">
-                  Your API key
-                </h2>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h2 className="text-[14px] font-semibold">
+                      Your API key
+                    </h2>
 
-                <p className="mt-1 text-[12px] text-[var(--app-text-secondary)]">
-                  Keep this key private. You can always
-                  create a new one from settings.
-                </p>
+                    <p className="mt-1 text-[12px] text-[var(--app-text-secondary)]">
+                      Keep this key private. You can always
+                      create a new one from settings.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowRegenerateConfirm(true)
+                    }
+                    disabled={regenerating}
+                    className="shrink-0 text-[11px] font-medium text-[var(--app-text-secondary)] transition hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    Regenerate
+                  </button>
+                </div>
 
                 <div className="mt-3 flex overflow-hidden rounded-xl border border-[var(--app-border)] bg-[var(--app-surface)] transition-colors hover:border-blue-500/20">
                   <div className="min-w-0 flex-1 overflow-x-auto px-4 py-3.5">
@@ -449,6 +521,52 @@ opentelemetry-instrument python app.py`;
                       : "Copy"}
                   </button>
                 </div>
+
+                {showRegenerateConfirm && (
+                  <div className="mt-3 rounded-xl border border-red-500/20 bg-red-500/[0.04] p-4">
+                    <p className="text-[12px] font-semibold">
+                      Regenerate this API key?
+                    </p>
+
+                    <p className="mt-1.5 text-[11px] leading-5 text-[var(--app-text-secondary)]">
+                      This will immediately invalidate your
+                      current key. Any project using it will
+                      stop sending traces until you update its
+                      configuration.
+                    </p>
+
+                    <div className="mt-3 flex items-center justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowRegenerateConfirm(false)
+                        }
+                        disabled={regenerating}
+                        className="rounded-lg px-3 py-2 text-[11px] font-medium text-[var(--app-text-secondary)] transition hover:bg-[var(--app-surface-raised)] hover:text-[var(--app-text)] disabled:opacity-50"
+                      >
+                        Cancel
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          const success =
+                            await handleRegenerateApiKey();
+
+                          if (success) {
+                            setShowRegenerateConfirm(false);
+                          }
+                        }}
+                        disabled={regenerating}
+                        className="rounded-lg bg-red-500 px-3 py-2 text-[11px] font-medium text-white transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        {regenerating
+                          ? "Regenerating..."
+                          : "Regenerate key"}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </section>
 
               <section>
