@@ -37,7 +37,7 @@ export const DAG_CANVAS = {
   },
 
   zoom: {
-    min: 0.35,
+    min: 0.2,
     max: 1.9,
   },
 } as const;
