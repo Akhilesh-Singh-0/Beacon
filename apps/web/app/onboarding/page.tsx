@@ -17,6 +17,8 @@ type MeResponse = {
   apiKey: string;
 };
 
+type Stack = "node" | "python";
+
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   "http://localhost:3001";
@@ -114,15 +116,85 @@ function StepNumber({
   );
 }
 
+function NodeIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      width="17"
+      height="17"
+      viewBox="0 0 24 24"
+      fill="none"
+    >
+      <path
+        d="M8 4h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"
+        stroke="currentColor"
+        strokeWidth="1.7"
+      />
+      <path
+        d="M9 8h6M9 12h6M9 16h4"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function PythonIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      width="17"
+      height="17"
+      viewBox="0 0 24 24"
+      fill="none"
+    >
+      <path
+        d="M12 3c-3.5 0-4 1.5-4 3.5V9h4.5v1H7.5C5 10 3 11.5 3 15s2 4 4.5 4H10v-2.5C10 14 11.5 13 14 13h3c2 0 4-1.5 4-4V7c0-2.5-2-4-4.5-4H12Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M12 21c3.5 0 4-1.5 4-3.5V15h-4.5v-1h5c2.5 0 4.5-1.5 4.5-5s-2-4-4.5-4H14v2.5C14 10 12.5 11 10 11H7c-2 0-4 1.5-4 4v2c0 2.5 2 4 4.5 4H12Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <circle
+        cx="10"
+        cy="6.5"
+        r="0.8"
+        fill="currentColor"
+      />
+      <circle
+        cx="14"
+        cy="17.5"
+        r="0.8"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
 export default function OnboardingPage() {
-  const { getToken, isLoaded, isSignedIn } = useAuth();
+  const { getToken, isLoaded, isSignedIn } =
+    useAuth();
 
   const [data, setData] =
     useState<MeResponse | null>(null);
-  const [loading, setLoading] = useState(true);
+
+  const [loading, setLoading] =
+    useState(true);
+
   const [error, setError] =
     useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+
+  const [copied, setCopied] =
+    useState<string | null>(null);
+
+  const [stack, setStack] =
+    useState<Stack>("node");
 
   useEffect(() => {
     async function loadUser() {
@@ -138,7 +210,9 @@ export default function OnboardingPage() {
         const token = await getToken();
 
         if (!token) {
-          throw new Error("Could not get Clerk token");
+          throw new Error(
+            "Could not get Clerk token",
+          );
         }
 
         const response = await fetch(
@@ -162,6 +236,7 @@ export default function OnboardingPage() {
         setData(result);
       } catch (error) {
         console.error(error);
+
         setError(
           "We couldn't load your workspace details.",
         );
@@ -171,16 +246,22 @@ export default function OnboardingPage() {
     }
 
     loadUser();
-  }, [getToken, isLoaded, isSignedIn]);
+  }, [
+    getToken,
+    isLoaded,
+    isSignedIn,
+  ]);
 
-  async function copyApiKey() {
-    if (!data) return;
+  async function copyText(
+    id: string,
+    text: string,
+  ) {
+    await navigator.clipboard.writeText(text);
 
-    await navigator.clipboard.writeText(data.apiKey);
-    setCopied(true);
+    setCopied(id);
 
     setTimeout(() => {
-      setCopied(false);
+      setCopied(null);
     }, 2000);
   }
 
@@ -207,7 +288,8 @@ export default function OnboardingPage() {
           </h1>
 
           <p className="mt-3 text-sm text-red-500">
-            {error ?? "Unable to load your account."}
+            {error ??
+              "Unable to load your account."}
           </p>
 
           <Link
@@ -221,8 +303,53 @@ export default function OnboardingPage() {
     );
   }
 
-  const envExample =
-    `BEACON_API_KEY=${data.apiKey}`;
+  const apiKey = data.apiKey;
+
+  const endpoint =
+    `${API_URL}/v1/traces`;
+
+  const nodeInstall =
+    "npm install @opentelemetry/api @opentelemetry/auto-instrumentations-node";
+
+  const nodeRun = `OTEL_TRACES_EXPORTER=otlp \\
+OTEL_EXPORTER_OTLP_TRACES_ENDPOINT="${endpoint}" \\
+OTEL_EXPORTER_OTLP_TRACES_PROTOCOL="http/protobuf" \\
+OTEL_EXPORTER_OTLP_TRACES_HEADERS="x-api-key=${apiKey}" \\
+OTEL_SERVICE_NAME="my-agent" \\
+NODE_OPTIONS="--require @opentelemetry/auto-instrumentations-node/register" \\
+npm run dev`;
+
+  const pythonInstall =
+    "pip install opentelemetry-distro opentelemetry-exporter-otlp";
+
+  const pythonRun = `OTEL_TRACES_EXPORTER="otlp" \\
+OTEL_METRICS_EXPORTER="none" \\
+OTEL_LOGS_EXPORTER="none" \\
+OTEL_EXPORTER_OTLP_TRACES_ENDPOINT="${endpoint}" \\
+OTEL_EXPORTER_OTLP_TRACES_PROTOCOL="http/protobuf" \\
+OTEL_EXPORTER_OTLP_TRACES_HEADERS="x-api-key=${apiKey}" \\
+OTEL_SERVICE_NAME="my-agent" \\
+opentelemetry-instrument python app.py`;
+
+  const installCommand =
+    stack === "node"
+      ? nodeInstall
+      : pythonInstall;
+
+  const runCommand =
+    stack === "node"
+      ? nodeRun
+      : pythonRun;
+
+  const stackLabel =
+    stack === "node"
+      ? "Node.js"
+      : "Python";
+
+  const stackIcon =
+    stack === "node"
+      ? <NodeIcon />
+      : <PythonIcon />;
 
   return (
     <main className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] transition-colors duration-200">
@@ -266,9 +393,9 @@ export default function OnboardingPage() {
               </h1>
 
               <p className="mt-4 max-w-2xl text-[15px] leading-7 text-[var(--app-text-secondary)] sm:text-base">
-                Connect your OpenTelemetry traces to
-                Beacon and start seeing your AI agent
-                execution in real time.
+                Connect your project to Beacon and
+                start seeing your AI agent execution
+                in real time.
               </p>
             </div>
 
@@ -302,81 +429,207 @@ export default function OnboardingPage() {
                 <div className="mt-3 flex overflow-hidden rounded-xl border border-[var(--app-border)] bg-[var(--app-surface)] transition-colors hover:border-blue-500/20">
                   <div className="min-w-0 flex-1 overflow-x-auto px-4 py-3.5">
                     <code className="whitespace-nowrap font-mono text-[12px] text-[var(--app-text)]">
-                      {data.apiKey}
+                      {apiKey}
                     </code>
                   </div>
 
                   <button
                     type="button"
-                    onClick={copyApiKey}
+                    onClick={() =>
+                      copyText(
+                        "api-key",
+                        apiKey,
+                      )
+                    }
                     className="flex shrink-0 items-center gap-2 border-l border-[var(--app-border)] bg-[var(--app-surface-raised)] px-4 text-[12px] font-medium text-[var(--app-text-secondary)] transition hover:text-[var(--app-text)]"
                   >
                     <CopyIcon />
-                    {copied ? "Copied" : "Copy"}
+                    {copied === "api-key"
+                      ? "Copied"
+                      : "Copy"}
                   </button>
                 </div>
               </section>
 
               <section>
-                <h2 className="text-[14px] font-semibold">
-                  Add it to your environment
-                </h2>
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    <h2 className="text-[14px] font-semibold">
+                      Connect your project
+                    </h2>
 
-                <p className="mt-1 text-[12px] text-[var(--app-text-secondary)]">
-                  Create a `.env` file in your agent
-                  project and add:
-                </p>
-
-                <div className="mt-3 flex overflow-hidden rounded-xl border border-[var(--app-border)] bg-[var(--app-surface)] transition-colors hover:border-violet-500/20">
-                  <div className="min-w-0 flex-1 overflow-x-auto px-4 py-3.5">
-                    <code className="whitespace-nowrap font-mono text-[12px] text-[var(--app-text)]">
-                      {envExample}
-                    </code>
+                    <p className="mt-1 text-[12px] text-[var(--app-text-secondary)]">
+                      Choose your stack. Beacon will
+                      generate the setup for you.
+                    </p>
                   </div>
+
+                  <div className="hidden rounded-full border border-[var(--app-border)] bg-[var(--app-surface)] px-3 py-1.5 text-[10px] font-medium text-[var(--app-text-muted)] sm:block">
+                    No Beacon code required
+                  </div>
+                </div>
+
+                <div className="mt-4 grid grid-cols-2 gap-2 rounded-xl border border-[var(--app-border)] bg-[var(--app-surface)] p-1">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setStack("node")
+                    }
+                    className={[
+                      "flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-[12px] font-medium transition-all",
+                      stack === "node"
+                        ? "bg-blue-500/[0.10] text-blue-600 shadow-sm dark:bg-blue-400/[0.10] dark:text-blue-300"
+                        : "text-[var(--app-text-secondary)] hover:bg-[var(--app-surface-raised)] hover:text-[var(--app-text)]",
+                    ].join(" ")}
+                  >
+                    <NodeIcon />
+                    Node.js
+                  </button>
 
                   <button
                     type="button"
-                    onClick={async () => {
-                      await navigator.clipboard.writeText(
-                        envExample,
-                      );
-                    }}
-                    className="flex shrink-0 items-center gap-2 border-l border-[var(--app-border)] bg-[var(--app-surface-raised)] px-4 text-[12px] font-medium text-[var(--app-text-secondary)] transition hover:text-[var(--app-text)]"
+                    onClick={() =>
+                      setStack("python")
+                    }
+                    className={[
+                      "flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-[12px] font-medium transition-all",
+                      stack === "python"
+                        ? "bg-violet-500/[0.10] text-violet-600 shadow-sm dark:bg-violet-400/[0.10] dark:text-violet-300"
+                        : "text-[var(--app-text-secondary)] hover:bg-[var(--app-surface-raised)] hover:text-[var(--app-text)]",
+                    ].join(" ")}
                   >
-                    <CopyIcon />
-                    Copy
+                    <PythonIcon />
+                    Python
                   </button>
+                </div>
+
+                <div className="mt-5 space-y-5">
+                  <div>
+                    <div className="mb-2 flex items-center justify-between">
+                      <div>
+                        <p className="text-[12px] font-semibold">
+                          1. Install OpenTelemetry
+                        </p>
+
+                        <p className="mt-0.5 text-[11px] text-[var(--app-text-muted)]">
+                          Run this in your project.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex overflow-hidden rounded-xl border border-[var(--app-border)] bg-[var(--app-surface)]">
+                      <div className="min-w-0 flex-1 overflow-x-auto px-4 py-3.5">
+                        <code className="whitespace-nowrap font-mono text-[11px] text-[var(--app-text)]">
+                          {installCommand}
+                        </code>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          copyText(
+                            "install",
+                            installCommand,
+                          )
+                        }
+                        className="flex shrink-0 items-center gap-2 border-l border-[var(--app-border)] bg-[var(--app-surface-raised)] px-4 text-[12px] font-medium text-[var(--app-text-secondary)] transition hover:text-[var(--app-text)]"
+                      >
+                        <CopyIcon />
+                        {copied === "install"
+                          ? "Copied"
+                          : "Copy"}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="mb-2">
+                      <p className="text-[12px] font-semibold">
+                        2. Start with Beacon
+                      </p>
+
+                      <p className="mt-0.5 text-[11px] text-[var(--app-text-muted)]">
+                        This enables telemetry and sends
+                        traces to your workspace.
+                      </p>
+                    </div>
+
+                    <div className="overflow-hidden rounded-xl border border-[var(--app-border)] bg-[var(--app-surface)]">
+                      <div className="flex items-center justify-between border-b border-[var(--app-border)] bg-[var(--app-surface-raised)] px-4 py-2">
+                        <div className="flex items-center gap-2 text-[10px] font-medium text-[var(--app-text-muted)]">
+                          {stackIcon}
+                          {stackLabel}
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            copyText(
+                              "run",
+                              runCommand,
+                            )
+                          }
+                          className="flex items-center gap-2 text-[11px] font-medium text-[var(--app-text-secondary)] transition hover:text-[var(--app-text)]"
+                        >
+                          <CopyIcon />
+                          {copied === "run"
+                            ? "Copied"
+                            : "Copy"}
+                        </button>
+                      </div>
+
+                      <pre className="max-h-[230px] overflow-auto px-4 py-4 text-[11px] leading-6 text-[var(--app-text)]">
+                        <code>
+                          {runCommand}
+                        </code>
+                      </pre>
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-violet-400/15 bg-violet-500/[0.04] px-4 py-3.5 dark:bg-violet-400/[0.04]">
+                    <p className="text-[11px] leading-5 text-[var(--app-text-secondary)]">
+                      Beacon uses OpenTelemetry to
+                      receive traces. Zero-code
+                      instrumentation can capture
+                      supported libraries without
+                      requiring changes to your
+                      application code.
+                    </p>
+                  </div>
                 </div>
               </section>
 
               <section>
                 <h2 className="text-[14px] font-semibold">
-                  OTLP endpoint
+                  Beacon endpoint
                 </h2>
 
                 <p className="mt-1 text-[12px] text-[var(--app-text-secondary)]">
-                  Send OpenTelemetry traces to Beacon
-                  using the OTLP HTTP endpoint.
+                  This is where your OpenTelemetry
+                  traces are sent.
                 </p>
 
                 <div className="mt-3 flex overflow-hidden rounded-xl border border-[var(--app-border)] bg-[var(--app-surface)] transition-colors hover:border-pink-500/20">
                   <div className="min-w-0 flex-1 overflow-x-auto px-4 py-3.5">
                     <code className="whitespace-nowrap font-mono text-[12px] text-[var(--app-text)]">
-                      {API_URL}/v1/traces
+                      {endpoint}
                     </code>
                   </div>
 
                   <button
                     type="button"
-                    onClick={async () => {
-                      await navigator.clipboard.writeText(
-                        `${API_URL}/v1/traces`,
-                      );
-                    }}
+                    onClick={() =>
+                      copyText(
+                        "endpoint",
+                        endpoint,
+                      )
+                    }
                     className="flex shrink-0 items-center gap-2 border-l border-[var(--app-border)] bg-[var(--app-surface-raised)] px-4 text-[12px] font-medium text-[var(--app-text-secondary)] transition hover:text-[var(--app-text)]"
                   >
                     <CopyIcon />
-                    Copy
+                    {copied === "endpoint"
+                      ? "Copied"
+                      : "Copy"}
                   </button>
                 </div>
               </section>
@@ -465,22 +718,13 @@ export default function OnboardingPage() {
 
                   <div className="min-w-0 pt-1">
                     <h3 className="text-[14px] font-semibold">
-                      Configure OpenTelemetry
+                      Connect your stack
                     </h3>
 
                     <p className="mt-2 text-[12px] leading-5 text-[var(--app-text-secondary)]">
-                      Set up your agent or application
-                      to export traces to Beacon using
-                      OTLP.
+                      Choose Node.js or Python and
+                      copy the generated Beacon setup.
                     </p>
-
-                    <button
-                      type="button"
-                      className="mt-4 inline-flex items-center gap-2 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface-raised)] px-3.5 py-2 text-[11px] font-medium transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-500/30 hover:text-blue-500"
-                    >
-                      View documentation
-                      <ArrowRightIcon />
-                    </button>
                   </div>
                 </div>
 
@@ -496,10 +740,9 @@ export default function OnboardingPage() {
                     </h3>
 
                     <p className="mt-2 text-[12px] leading-5 text-[var(--app-text-secondary)]">
-                      Start your agent or application.
-                      Beacon will receive traces and
-                      build the execution graph in real
-                      time.
+                      Start your agent or application
+                      normally. Beacon will receive
+                      supported telemetry automatically.
                     </p>
                   </div>
                 </div>
@@ -516,10 +759,8 @@ export default function OnboardingPage() {
                     </h3>
 
                     <p className="mt-2 text-[12px] leading-5 text-[var(--app-text-secondary)]">
-                      Once traces start arriving,
-                      you'll see live executions,
-                      spans, and logs in your
-                      workspace.
+                      Once traces arrive, you'll see
+                      the execution in Run History.
                     </p>
 
                     <Link
