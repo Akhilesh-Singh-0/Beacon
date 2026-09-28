@@ -545,9 +545,7 @@ export default function RunDetailClient({
                     <DagCanvas
                       nodes={canvasNodes}
                       edges={canvasEdges}
-                      fitViewOnChange={
-                        isReplay
-                      }
+                      fitViewOnChange
                       visibleNodeIds={
                         isReplay
                           ? replayVisibleNodeIds
