@@ -97,16 +97,26 @@ function DagViewportController({
   useEffect(() => {
     if (!enabled || !nodesInitialized) return;
 
-    const frame = requestAnimationFrame(() => {
-      void fitView({
-        padding: 0.2,
-        minZoom: DAG_CANVAS.zoom.min,
-        maxZoom: 1.15,
-        duration: 350,
+    let secondFrame: number | undefined;
+
+    const firstFrame = requestAnimationFrame(() => {
+      secondFrame = requestAnimationFrame(() => {
+        void fitView({
+          padding: 0.2,
+          minZoom: DAG_CANVAS.zoom.min,
+          maxZoom: 1.15,
+          duration: 350,
+        });
       });
     });
 
-    return () => cancelAnimationFrame(frame);
+    return () => {
+      cancelAnimationFrame(firstFrame);
+
+      if (secondFrame !== undefined) {
+        cancelAnimationFrame(secondFrame);
+      }
+    };
   }, [
     enabled,
     nodesInitialized,
