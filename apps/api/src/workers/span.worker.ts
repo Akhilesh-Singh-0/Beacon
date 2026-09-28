@@ -54,10 +54,12 @@ export const spanWorker = new Worker<SpanJobData>(
 
     let nodeStatus: NodeStatus = NodeStatus.RUNNING;
 
-    if (status?.code === "OK") {
-      nodeStatus = NodeStatus.SUCCESS;
-    } else if (status?.code === "ERROR") {
-      nodeStatus = NodeStatus.ERROR;
+    if (endTime) {
+      if (status?.code === "ERROR") {
+        nodeStatus = NodeStatus.ERROR;
+      } else {
+        nodeStatus = NodeStatus.SUCCESS;
+      }
     }
 
     let node;
@@ -114,6 +116,36 @@ export const spanWorker = new Worker<SpanJobData>(
         },
       }),
     );
+
+    if (!parentSpanId && endTime) {
+      const runStatus =
+        status?.code === "ERROR"
+          ? "FAILED"
+          : "COMPLETED";
+
+      const updatedRun = await prisma.run.update({
+        where: {
+          id: run.id,
+        },
+        data: {
+          status: runStatus,
+          completedAt: endTime,
+        },
+      });
+
+      await redis.publish(
+        `run:${run.id}`,
+        JSON.stringify({
+          type: "run.updated",
+          runId: run.id,
+          run: {
+            id: updatedRun.id,
+            status: updatedRun.status,
+            completedAt: updatedRun.completedAt,
+          },
+        }),
+      );
+    }
 
     const childNodes = await prisma.node.findMany({
       where: {
