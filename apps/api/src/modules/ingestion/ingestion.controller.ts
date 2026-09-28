@@ -22,7 +22,13 @@ export async function ingestController(
 
   const spans = normalizeOtlpTrace(decoded);
 
-  await ingestSpan(apiKey, spans);
+  const result = await ingestSpan(apiKey, spans);
+
+  if (!result.success) {
+    return reply.status(401).send({
+      error: result.error,
+    });
+  }
 
   return reply.code(200).send({});
 }
