@@ -1,6 +1,9 @@
 import type { FastifyInstance } from "fastify";
 
-import { getMeController } from "./me.controller";
+import {
+  getMeController,
+  regenerateApiKeyController,
+} from "./me.controller";
 
 export async function meRoute(
   fastify: FastifyInstance,
@@ -8,5 +11,10 @@ export async function meRoute(
   fastify.get(
     "/api/me",
     getMeController,
+  );
+
+  fastify.post(
+    "/api/me/api-key/regenerate",
+    regenerateApiKeyController,
   );
 }

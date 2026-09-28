@@ -1,4 +1,7 @@
-import { findUserWithApiKey } from "./me.repository";
+import {
+  findUserWithApiKey,
+  regenerateWorkspaceApiKey,
+} from "./me.repository";
 
 export async function getUser(clerkId: string) {
   const user = await findUserWithApiKey(clerkId);
@@ -31,6 +34,22 @@ export async function getUser(clerkId: string) {
   return {
     success: true,
     workspace: membership.workspace,
+    apiKey: apiKey.apiKey,
+  };
+}
+
+export async function regenerateApiKey(clerkId: string) {
+  const apiKey = await regenerateWorkspaceApiKey(clerkId);
+
+  if (!apiKey) {
+    return {
+      success: false,
+      error: "User or workspace not found",
+    };
+  }
+
+  return {
+    success: true,
     apiKey: apiKey.apiKey,
   };
 }
