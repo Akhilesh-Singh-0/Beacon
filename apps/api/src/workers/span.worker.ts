@@ -8,6 +8,40 @@ type SpanJobData = IngestionPayload & {
   workspaceId: string;
 };
 
+function extractTotalTokens(
+  attributes: unknown,
+): number {
+  if (
+    !attributes ||
+    typeof attributes !== "object" ||
+    Array.isArray(attributes)
+  ) {
+    return 0;
+  }
+
+  const spanData = (
+    attributes as Record<string, unknown>
+  )["agent.span_data"];
+
+  if (typeof spanData !== "string") {
+    return 0;
+  }
+
+  try {
+    const parsed = JSON.parse(spanData) as {
+      data?: {
+        usage?: {
+          total_tokens?: number;
+        };
+      };
+    };
+
+    return parsed.data?.usage?.total_tokens ?? 0;
+  } catch {
+    return 0;
+  }
+}
+
 export const spanWorker = new Worker<SpanJobData>(
   "span-processing",
   async (job) => {
@@ -52,6 +86,9 @@ export const spanWorker = new Worker<SpanJobData>(
       ? new Date(Number(endTimeUnixNano) / 1_000_000)
       : null;
 
+      const totalTokens =
+      extractTotalTokens(attributes);  
+
     let nodeStatus: NodeStatus = NodeStatus.RUNNING;
 
     if (endTime) {
@@ -74,6 +111,7 @@ export const spanWorker = new Worker<SpanJobData>(
           startTime,
           endTime,
           status: nodeStatus,
+          totalTokens,
           attributes: (attributes as Prisma.InputJsonValue) ?? null,
         },
       });
