@@ -141,7 +141,7 @@ export default function DagNode({
           }}
         />
 
-        <div
+<div
           aria-hidden="true"
           className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full blur-3xl"
           style={{
@@ -170,47 +170,42 @@ export default function DagNode({
               {data.name}
             </p>
 
-            <div
-              className={
-                NODE_STYLES.statusRow
-              }
-            >
+            <div className={NODE_STYLES.statusRow}>
               <span
                 aria-hidden="true"
                 className={[
                   NODE_STYLES.indicator,
                   config.indicator,
-                  isRunning
-                    ? "animate-pulse"
-                    : "",
+                  isRunning ? "animate-pulse" : "",
                 ].join(" ")}
                 style={{
-                  boxShadow:
-                    statusGlow.dot,
+                  boxShadow: statusGlow.dot,
                 }}
               />
 
-              <span
-                className={
-                  NODE_STYLES.statusText
-                }
-              >
+              <span className={NODE_STYLES.statusText}>
                 {config.label}
               </span>
             </div>
           </div>
 
-          {data.duration && (
-            <span
-              className={
-                NODE_STYLES.duration
-              }
-            >
-              {data.duration}
-            </span>
+          {(data.duration || data.totalTokens != null) && (
+            <div className="flex flex-col items-end gap-0.5">
+              {data.duration && (
+                <span className={NODE_STYLES.duration}>
+                  {data.duration}
+                </span>
+              )}
+
+              {data.totalTokens != null && (
+                <span className="text-[9px] text-[var(--app-text-muted)]">
+                  {data.totalTokens.toLocaleString()} tokens
+                </span>
+              )}
+            </div>
           )}
         </div>
-      </div>
+      </div> 
 
       <Handle
         type="target"

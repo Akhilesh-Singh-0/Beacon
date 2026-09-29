@@ -15,6 +15,7 @@ type ExistingGraphNode = {
   startTime: string;
   endTime: string | null;
   status: DagNodeData["status"];
+  totalToken: number;
   attributes: unknown;
 };
 
@@ -46,10 +47,21 @@ type EdgeCreatedEvent = {
   edge: ExistingGraphEdge;
 };
 
+type RunUpdatedEvent = {
+  type: "run.updated";
+  runId: string;
+  run: {
+    id: string;
+    status: "RUNNING" | "COMPLETED" | "FAILED";
+    completedAt: string | null;
+  };
+};
+
 type RunWebSocketEvent =
   | NodeCreatedEvent
   | NodeUpdatedEvent
-  | EdgeCreatedEvent;
+  | EdgeCreatedEvent
+  | RunUpdatedEvent;
 
 type ConnectionStatus =
   | "connecting"
@@ -57,10 +69,16 @@ type ConnectionStatus =
   | "disconnected"
   | "error";
 
+type RunStatus =
+  | "RUNNING"
+  | "COMPLETED"
+  | "FAILED";
+
 type UseDagWebSocketReturn = {
   nodes: Node<DagNodeData>[];
   edges: Edge[];
   connectionStatus: ConnectionStatus;
+  runStatus: RunStatus;
 };
 
 function getWebSocketUrl(runId: string) {
@@ -130,6 +148,9 @@ function toFlowNode(
         node.startTime,
         node.endTime,
       ),
+      startTime: node.startTime,
+      endTime: node.endTime,
+      totalTokens: node.totalToken,
     },
   };
 }
@@ -161,6 +182,11 @@ export function useDagWebSocket(
     "disconnected",
   );
 
+  const [
+    runStatus,
+    setRunStatus,
+  ] = useState<RunStatus>("RUNNING");
+
   useEffect(() => {
     if (!runId) {
       return;
@@ -172,6 +198,7 @@ export function useDagWebSocket(
     setNodes([]);
     setEdges([]);
     setConnectionStatus("connecting");
+    setRunStatus("RUNNING");
 
     async function initialize() {
       const apiUrl =
@@ -272,26 +299,27 @@ export function useDagWebSocket(
             }
 
             case "node.updated": {
+              const updatedNode = toFlowNode(
+                message.node,
+              );
+
               setNodes((currentNodes) =>
                 currentNodes.map((node) =>
-                  node.id === message.node.id
+                  node.id === updatedNode.id
                     ? {
-                        ...node,
-                        data: {
-                          ...node.data,
-                          status:
-                            message.node.status,
-                          duration:
-                            formatDuration(
-                              message.node
-                                .startTime,
-                              message.node
-                                .endTime,
-                            ),
-                        },
+                        ...updatedNode,
+                        position: node.position,
                       }
                     : node,
                 ),
+              );
+
+              break;
+            }
+
+            case "run.updated": {
+              setRunStatus(
+                message.run.status,
               );
 
               break;
@@ -371,5 +399,6 @@ export function useDagWebSocket(
     nodes,
     edges,
     connectionStatus,
+    runStatus,
   };
 }

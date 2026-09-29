@@ -323,6 +323,7 @@ export default function RunDetailClient({
     nodes: liveNodes,
     edges: liveEdges,
     connectionStatus,
+    runStatus,
   } = useDagWebSocket(runId);
 
   const [
@@ -356,6 +357,23 @@ export default function RunDetailClient({
     CONNECTION_STYLE[
       connectionStatus
     ];
+
+  const runStatusStyle = {
+    RUNNING: {
+      label: "Running",
+      dot: "#3b82f6",
+    },
+
+    COMPLETED: {
+      label: "Completed",
+      dot: "#10b981",
+    },
+
+    FAILED: {
+      label: "Failed",
+      dot: "#ef4444",
+    },
+  }[runStatus];
 
   const handleReplayChange =
     useCallback(
@@ -489,25 +507,25 @@ export default function RunDetailClient({
             <div
               className="hidden items-center gap-2 rounded-full border px-3 py-1.5 text-[10px] font-medium sm:flex"
               style={{
-                color: connection.dot,
-                borderColor: `${connection.dot}2A`,
-                backgroundColor: `${connection.dot}0D`,
+                color: runStatusStyle.dot,
+                borderColor: `${runStatusStyle.dot}2A`,
+                backgroundColor: `${runStatusStyle.dot}0D`,
               }}
             >
               <span
                 className="h-1.5 w-1.5 rounded-full"
                 style={{
                   backgroundColor:
-                    connection.dot,
+                    runStatusStyle.dot,
                   boxShadow:
-                    connectionStatus ===
-                    "connected"
-                      ? `0 0 8px ${connection.dot}`
+                    runStatus ===
+                    "RUNNING"
+                      ? `0 0 8px ${runStatusStyle.dot}`
                       : "none",
                 }}
               />
 
-              {connection.label}
+              {runStatusStyle.label}
             </div>
 
             <AppThemeToggle />
@@ -545,7 +563,7 @@ export default function RunDetailClient({
                     <DagCanvas
                       nodes={canvasNodes}
                       edges={canvasEdges}
-                      fitViewOnChange
+                      fitViewOnChange={isReplay}
                       visibleNodeIds={
                         isReplay
                           ? replayVisibleNodeIds
@@ -603,9 +621,27 @@ export default function RunDetailClient({
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 text-[10px] font-medium text-emerald-600 dark:text-emerald-300">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.55)]" />
-                      Live
+                    <div
+                      className={[
+                        "flex items-center gap-2 text-[10px] font-medium",
+                        runStatus === "RUNNING"
+                          ? "text-blue-600 dark:text-blue-300"
+                          : runStatus === "COMPLETED"
+                            ? "text-emerald-600 dark:text-emerald-300"
+                            : "text-red-600 dark:text-red-300",
+                      ].join(" ")}
+                    >
+                      <span
+                        className={[
+                          "h-1.5 w-1.5 rounded-full",
+                          runStatus === "RUNNING"
+                            ? "bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.55)]"
+                            : runStatus === "COMPLETED"
+                              ? "bg-emerald-500"
+                              : "bg-red-500",
+                        ].join(" ")}
+                      />
+                      {runStatusStyle.label}
                     </div>
                   </div>
 
@@ -729,13 +765,7 @@ export default function RunDetailClient({
 
                     <DetailRow
                       label="Status"
-                      value={
-                        runningCount > 0
-                          ? "Running"
-                          : errorCount > 0
-                            ? "Attention"
-                            : "Completed"
-                      }
+                      value={runStatusStyle.label}
                       status
                     />
 
@@ -932,7 +962,7 @@ function DetailRow({
             status={
               value === "Running"
                 ? "RUNNING"
-                : value === "Attention"
+                : value === "Failed"
                   ? "ERROR"
                   : "SUCCESS"
             }
