@@ -111,7 +111,7 @@ export const spanWorker = new Worker<SpanJobData>(
           startTime,
           endTime,
           status: nodeStatus,
-          totalTokens,
+          totalToken: totalTokens,
           attributes: (attributes as Prisma.InputJsonValue) ?? null,
         },
       });
