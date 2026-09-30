@@ -290,9 +290,7 @@ export default function LandingWorkflows() {
             </h2>
 
             <p className="mx-auto mt-6 max-w-[700px] text-[14px] leading-6 text-[var(--beacon-text-secondary)] sm:text-[15px]">
-              Whether you're building research agents, customer support
-              copilots, or autonomous systems, Beacon helps you ship with
-              confidence.
+              Whether you're building an AI workflow, tool-calling application, coding workflow, or another multi-step system, Beacon helps you understand how it executes.
             </p>
           </div>
         </Reveal>

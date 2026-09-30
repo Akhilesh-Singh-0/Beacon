@@ -60,8 +60,7 @@ export default function LandingFooter() {
               <BeaconLogo size="lg" />
 
               <p className="mt-5 max-w-[360px] text-[14px] leading-6 text-[var(--beacon-text-secondary)]">
-                Real-time observability for AI agents. Understand what your
-                agents are doing, step by step.
+                Real-time observability for OpenTelemetry-instrumented applications. See every execution step as it happens.
               </p>
 
               <a
@@ -118,8 +117,7 @@ export default function LandingFooter() {
               </p>
 
               <p className="mt-5 text-[14px] leading-6 text-[var(--beacon-text-secondary)]">
-                Send your first trace to Beacon and see your agent execution
-                come to life.
+                Send your first OpenTelemetry trace to Beacon and see your application execution come to life.
               </p>
 
               <Link

@@ -195,9 +195,7 @@ export default function LandingProblem() {
             </h2>
 
             <p className="mt-6 max-w-[470px] text-[14px] leading-6 text-[var(--beacon-text-secondary)] sm:text-[15px]">
-              Beacon gives you visibility into what your agents are doing, which
-              tools they use, how long each step takes, and where things go
-              wrong.
+              Beacon shows what your application is doing, which operations it performs, how the steps connect, how long they take, and where an execution goes wrong.
             </p>
           </div>
         </Reveal>

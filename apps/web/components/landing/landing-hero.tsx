@@ -78,21 +78,19 @@ export default function LandingHero() {
               />
 
               <span className="text-[10px] font-medium uppercase tracking-[0.18em]">
-                Real-time observability for AI agents
+                Real-time observability for AI applications
               </span>
             </div>
 
             <h1 className="beacon-reveal beacon-reveal-2 mt-7 max-w-[900px] font-semibold text-[clamp(52px,6.4vw,84px)] leading-[0.98] tracking-[-0.055em] text-[var(--beacon-text)]">
-              Turn your AI agents
+                See your AI application
               <span className="block bg-gradient-to-r from-[#a89bea] via-[#b9aaf2] to-[#8dd9d0] bg-clip-text text-transparent">
-                into clear insights.
+                execute in real time.
               </span>
             </h1>
 
             <p className="beacon-reveal beacon-reveal-3 mt-7 max-w-[680px] text-[clamp(16px,1.35vw,18px)] leading-[1.75] text-[var(--beacon-text-secondary)]">
-              Beacon turns agent executions into live, inspectable traces.
-              Follow every tool call, model decision, and execution path as it
-              happens.
+              Beacon turns OpenTelemetry traces from your application into a live execution graph. Follow tool calls, model operations, and execution steps as they happen.
             </p>
 
             <div className="beacon-reveal beacon-reveal-4 mt-9 flex flex-wrap items-center justify-center gap-3">
@@ -111,6 +109,12 @@ export default function LandingHero() {
                 <RunsIcon />
                 <span>Explore runs</span>
               </Link>
+            </div>
+
+            <div>
+              <p className="beacon-reveal beacon-reveal-3 mt-7 max-w-[680px] text-[clamp(16px,1.35vw,18px)] leading-[1.75] text-[var(--beacon-text-secondary)]">
+                Works with any OpenTelemetry-instrumented application.
+              </p>
             </div>
           </div>
 
