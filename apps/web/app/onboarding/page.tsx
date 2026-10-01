@@ -705,15 +705,15 @@ opentelemetry-instrument python app.py`;
                       Beacon receives OpenTelemetry traces from your application. If your libraries support OpenTelemetry auto-instrumentation, you can capture telemetry without changing your application code.
                     </p>
                   </div>
-                  <div className="mt-4 flex items-start gap-2.5 border-l-2 border-[var(--app-border)] pl-3">
-                    <span className="pt-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--app-text-muted)]">
-                      Note
-                    </span>
+                  <div className="mt-4 rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-raised)] px-4 py-3.5">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--app-text-secondary)]">
+                      How Beacon connects
+                    </p>
 
-                    <p className="text-[11px] leading-5 text-[var(--app-text-muted)]">
+                    <p className="mt-1.5 text-[11px] leading-5 text-[var(--app-text-muted)]">
                       Beacon works with applications and workflows that emit OpenTelemetry traces. It does not directly connect to ChatGPT, Claude, or Codex.
                     </p>
-                </div>
+                  </div>
                 </div>
               </section>
 
