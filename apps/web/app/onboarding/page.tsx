@@ -450,9 +450,7 @@ opentelemetry-instrument python app.py`;
               </h1>
 
               <p className="mt-4 max-w-2xl text-[15px] leading-7 text-[var(--app-text-secondary)] sm:text-base">
-                Connect your project to Beacon and
-                start seeing your AI agent execution
-                in real time.
+                Connect an OpenTelemetry-instrumented application to Beacon and visualize its execution in real time.
               </p>
             </div>
 
@@ -573,17 +571,16 @@ opentelemetry-instrument python app.py`;
                 <div className="flex items-end justify-between gap-4">
                   <div>
                     <h2 className="text-[14px] font-semibold">
-                      Connect your project
+                      Connect your application
                     </h2>
 
                     <p className="mt-1 text-[12px] text-[var(--app-text-secondary)]">
-                      Choose your stack. Beacon will
-                      generate the setup for you.
+                      Choose Node.js or Python and configure your application to send OpenTelemetry traces to Beacon.
                     </p>
                   </div>
 
                   <div className="hidden rounded-full border border-[var(--app-border)] bg-[var(--app-surface)] px-3 py-1.5 text-[10px] font-medium text-[var(--app-text-muted)] sm:block">
-                    No Beacon code required
+                    No Beacon SDK required
                   </div>
                 </div>
 
@@ -630,7 +627,7 @@ opentelemetry-instrument python app.py`;
                         </p>
 
                         <p className="mt-0.5 text-[11px] text-[var(--app-text-muted)]">
-                          Run this in your project.
+                          Install the OpenTelemetry packages required by your application.
                         </p>
                       </div>
                     </div>
@@ -663,12 +660,11 @@ opentelemetry-instrument python app.py`;
                   <div>
                     <div className="mb-2">
                       <p className="text-[12px] font-semibold">
-                        2. Start with Beacon
+                        2. Configure your OTLP exporter
                       </p>
 
                       <p className="mt-0.5 text-[11px] text-[var(--app-text-muted)]">
-                        This enables telemetry and sends
-                        traces to your workspace.
+                        Configure your application to send OpenTelemetry traces to your Beacon workspace.
                       </p>
                     </div>
 
@@ -706,14 +702,12 @@ opentelemetry-instrument python app.py`;
 
                   <div className="rounded-xl border border-violet-400/15 bg-violet-500/[0.04] px-4 py-3.5 dark:bg-violet-400/[0.04]">
                     <p className="text-[11px] leading-5 text-[var(--app-text-secondary)]">
-                      Beacon uses OpenTelemetry to
-                      receive traces. Zero-code
-                      instrumentation can capture
-                      supported libraries without
-                      requiring changes to your
-                      application code.
+                      Beacon receives OpenTelemetry traces from your application. If your libraries support OpenTelemetry auto-instrumentation, you can capture telemetry without changing your application code.
                     </p>
                   </div>
+                  <p className="mt-3 text-[11px] leading-5 text-[var(--app-text-muted)]">
+                    Beacon works with applications and workflows that emit OpenTelemetry traces. It does not directly connect to ChatGPT, Claude, or Codex.
+                  </p>
                 </div>
               </section>
 
@@ -756,8 +750,8 @@ opentelemetry-instrument python app.py`;
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               {[
                 {
-                  title: "Works with any stack",
-                  text: "Use Beacon with Python, TypeScript, LangChain, LlamaIndex, or any OpenTelemetry-compatible setup.",
+                  title: "OpenTelemetry compatible",
+                  text: "Use Beacon with Node.js, Python, TypeScript, or any workflow that can emit OpenTelemetry traces.",
                   icon: "✦",
                   className:
                     "border-blue-200/60 bg-gradient-to-br from-blue-50/80 via-white to-blue-50/40 dark:border-blue-400/10 dark:bg-[linear-gradient(135deg,rgba(18,28,44,0.96),rgba(12,18,28,0.96))]",
@@ -765,8 +759,8 @@ opentelemetry-instrument python app.py`;
                     "bg-blue-500/[0.08] text-blue-600 dark:bg-blue-400/[0.09] dark:text-blue-300",
                 },
                 {
-                  title: "Real-time visibility",
-                  text: "See agent executions, tool calls, prompts, and responses as they happen.",
+                  title: "Real-time execution",
+                  text: "See execution steps and supported tool operations as they happen.",
                   icon: "◆",
                   className:
                     "border-violet-200/60 bg-gradient-to-br from-violet-50/70 via-white to-violet-50/40 dark:border-violet-400/10 dark:bg-[linear-gradient(135deg,rgba(25,20,42,0.96),rgba(15,16,28,0.96))]",
@@ -836,12 +830,11 @@ opentelemetry-instrument python app.py`;
 
                   <div className="min-w-0 pt-1">
                     <h3 className="text-[14px] font-semibold">
-                      Connect your stack
+                      Connect your application
                     </h3>
 
                     <p className="mt-2 text-[12px] leading-5 text-[var(--app-text-secondary)]">
-                      Choose Node.js or Python and
-                      copy the generated Beacon setup.
+                      Choose Node.js or Python and configure your application to send OpenTelemetry traces.
                     </p>
                   </div>
                 </div>
@@ -854,13 +847,11 @@ opentelemetry-instrument python app.py`;
 
                   <div className="min-w-0 pt-1">
                     <h3 className="text-[14px] font-semibold">
-                      Run your agent
+                      Run your application
                     </h3>
 
                     <p className="mt-2 text-[12px] leading-5 text-[var(--app-text-secondary)]">
-                      Start your agent or application
-                      normally. Beacon will receive
-                      supported telemetry automatically.
+                      Start your application normally. Beacon will receive its OpenTelemetry traces.
                     </p>
                   </div>
                 </div>
@@ -877,8 +868,7 @@ opentelemetry-instrument python app.py`;
                     </h3>
 
                     <p className="mt-2 text-[12px] leading-5 text-[var(--app-text-secondary)]">
-                      Once traces arrive, you'll see
-                      the execution in Run History.
+                      Once traces arrive, you'll see the execution appear in Run History.
                     </p>
 
                     <Link
