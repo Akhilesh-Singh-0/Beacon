@@ -4,9 +4,9 @@
 
 # Beacon
 
-### Observability for AI Agents
+### Observability for AI Workflows
 
-See what your AI agents are doing — in real time.
+See what's happening inside your AI workflows — in real time.
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
 [![Fastify](https://img.shields.io/badge/Fastify-TypeScript-black?logo=fastify)](https://fastify.dev/)
@@ -25,7 +25,7 @@ See what your AI agents are doing — in real time.
 
 ## What is Beacon?
 
-Beacon is an observability platform for AI agents that turns OpenTelemetry traces into a real-time visual representation of an agent's execution.
+Beacon is an observability platform for AI workflows that turns OpenTelemetry traces into a real-time visual representation of their execution.
 
 When an agent runs, it may make LLM calls, invoke tools, read and write files, run commands, and perform many operations before producing a final result. Beacon captures those operations through OpenTelemetry and turns them into an execution graph, so you can see what the agent is doing, how the steps are connected, and where a run succeeds or fails.
 
