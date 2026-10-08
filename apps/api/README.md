@@ -4,7 +4,7 @@
 
 <h1>Beacon API</h1>
 
-<p>AI agent observability backend</p>
+<p>AI workflow observability backend</p>
 
 <p><em>Fastify backend handling OpenTelemetry ingestion, asynchronous span processing, execution graph construction, PostgreSQL persistence, and real-time WebSocket updates.</em></p>
 
@@ -30,12 +30,12 @@
 
 ## What This Does
 
-The Beacon API is the backend responsible for turning OpenTelemetry spans from AI agents into persistent execution data and real-time dashboard updates.
+The Beacon API is the backend responsible for turning OpenTelemetry spans from AI workflows into persistent execution data and real-time dashboard updates.
 
-An agent sends telemetry to Beacon:
+An AI workflow sends telemetry to Beacon:
 
 ```text
-AI Agent
+AI Workflow
    ↓
 OpenTelemetry
    ↓
@@ -71,7 +71,7 @@ The HTTP request does not wait for PostgreSQL graph construction to finish.
 ```mermaid
 flowchart TB
 
-    A["AI Agent"] --> O["OpenTelemetry"]
+    A["AI Workflow"] --> O["OpenTelemetry"]
 
     O -->|"OTLP traces"| API["Fastify API"]
     API -->|"Validate API key"| Q["BullMQ"]
@@ -83,12 +83,12 @@ flowchart TB
     R -->|"Pub/Sub"| WS["WebSocket"]
     WS -->|"Live execution events"| UI["Next.js Dashboard"]
 
-    classDef agent fill:#111827,stroke:#60a5fa,color:#f8fafc
+    classDef workflow fill:#111827,stroke:#60a5fa,color:#f8fafc
     classDef backend fill:#111827,stroke:#a78bfa,color:#f8fafc
     classDef storage fill:#111827,stroke:#34d399,color:#f8fafc
     classDef frontend fill:#111827,stroke:#38bdf8,color:#f8fafc
 
-    class A,O agent
+    class A,O workflow
     class API,Q,W,WS backend
     class DB,R storage
     class UI frontend
@@ -314,7 +314,7 @@ Run
 
 ### Run
 
-Represents one agent execution.
+Represents one workflow execution.
 
 A run tracks information such as:
 
@@ -544,7 +544,7 @@ When the final browser leaves a run, the Redis subscription can be cleaned up.
 
 ## Token & Cost Tracking
 
-Beacon can extract token usage from agent telemetry when usage data is present in the span attributes.
+Beacon can extract token usage from workflow telemetry when usage data is present in the span attributes.
 
 The worker reads supported usage information and stores the total token count on the node.
 
@@ -554,7 +554,7 @@ Conceptually:
 OTEL attributes
       │
       ▼
-agent span data
+workflow span data
       │
       ▼
 usage.total_tokens
@@ -701,7 +701,7 @@ The graph contains the run's nodes and their relationships so the dashboard can 
 
 ## Authentication
 
-Agent ingestion uses Beacon API keys.
+Workflow telemetry ingestion uses Beacon API keys.
 
 A key belongs to a workspace and can be activated or deactivated.
 
@@ -892,7 +892,7 @@ Beacon's production OTLP ingestion endpoint was tested with authenticated reques
 
 At 100 concurrent clients, the production ingestion endpoint handled **4,015 authenticated requests over 10.62 seconds at 377.95 req/s with 0% HTTP request failures**.
 
-These numbers measure the OTLP ingestion endpoint. They do not represent complete agent execution throughput because span processing is intentionally asynchronous through BullMQ.
+These numbers measure the OTLP ingestion endpoint. They do not represent complete workflow execution throughput because span processing is intentionally asynchronous through BullMQ.
 
 ---
 
@@ -981,19 +981,19 @@ The dashboard communicates with the API over HTTP for persisted run data and Web
 
 ## Example OTEL Configuration
 
-For an OTEL-enabled agent:
+For an application or workflow instrumented with OpenTelemetry:
 
 ```bash
 export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT="https://your-beacon-api/v1/traces"
 export OTEL_EXPORTER_OTLP_TRACES_PROTOCOL="http/json"
 export OTEL_EXPORTER_OTLP_TRACES_HEADERS="x-api-key=YOUR_BEACON_API_KEY"
-export OTEL_SERVICE_NAME="my-agent"
+export OTEL_SERVICE_NAME="my-ai-workflow"
 ```
 
 Once the agent starts emitting traces:
 
 ```text
-Agent
+AI Workflow
   ↓
 OpenTelemetry
   ↓
