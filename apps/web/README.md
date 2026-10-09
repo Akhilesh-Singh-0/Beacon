@@ -4,9 +4,9 @@
 
   <h1>Beacon Web</h1>
 
-  <p>AI agent observability dashboard</p>
+  <p>AI workflow observability dashboard</p>
 
-  <p><em>Next.js dashboard for visualizing AI agent executions as real-time execution graphs with OpenTelemetry, React Flow, WebSockets, and Clerk authentication.</em></p>
+  <p><em>Next.js dashboard for visualizing AI workflow executions as real-time execution graphs with OpenTelemetry, React Flow, WebSockets, and Clerk authentication.</em></p>
 
   <p>
     <img src="https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=nextdotjs&logoColor=white" alt="Next.js"/>
@@ -33,12 +33,12 @@
 
 ## What This Does
 
-The Beacon Web application is the dashboard for exploring and monitoring AI agent executions.
+The Beacon Web application is the dashboard for exploring and monitoring AI workflow executions.
 
-Instead of looking through a stream of logs, the dashboard turns an agent's OpenTelemetry spans into a visual execution graph.
+Instead of looking through a stream of logs, the dashboard turns OpenTelemetry spans into a visual execution graph.
 
 ```text
-AI Agent
+AI Workflow
    ↓
 OpenTelemetry
    ↓
@@ -75,7 +75,7 @@ Inspect Execution Graph
 Watch Live Updates
 ```
 
-Beacon is designed around the idea that an AI agent execution should be something you can **see**, not just something you can read through logs.
+Beacon is designed around the idea that AI workflow execution should be something you can **see**, not just something you can read through logs.
 
 ---
 
@@ -184,7 +184,7 @@ React Flow re-renders graph
 
 This separation is important.
 
-The frontend does not need to repeatedly poll the API to discover whether the agent has progressed.
+The frontend does not need to repeatedly poll the API to discover whether a workflow has progressed.
 
 ---
 
@@ -202,7 +202,7 @@ Edges
 Execution Graph
 ```
 
-Each node represents an operation from the agent execution.
+Each node represents an operation within the workflow execution.
 
 For example:
 
@@ -229,7 +229,7 @@ This makes it possible to understand the execution path instead of reconstructin
 
 ## Run States
 
-The dashboard displays the overall state of an agent execution.
+The dashboard displays the overall state of a workflow execution.
 
 ```text
 RUNNING
@@ -335,7 +335,7 @@ Currently running executions
 
 For an active run, the graph can continue changing while the user watches it.
 
-For a completed run, the persisted execution graph can be explored after the agent has finished.
+For a completed run, the persisted execution graph can be explored after the workflow has finished.
 
 ---
 
@@ -371,7 +371,7 @@ The dashboard routes are protected while public routes remain accessible where r
 
 ## Onboarding
 
-After authentication, Beacon provides an onboarding flow for connecting an agent to the dashboard.
+After authentication, Beacon provides an onboarding flow for connecting an instrumented application or workflow to the dashboard.
 
 The onboarding experience provides the information required to send telemetry to Beacon.
 
@@ -386,7 +386,7 @@ Get Beacon API key
       ↓
 Configure OTEL exporter
       ↓
-Run agent
+Run workflow
       ↓
 Watch execution in Beacon
 ```
@@ -815,7 +815,7 @@ The frontend uses HTTP for persisted run data and WebSockets for live execution 
 
 - [x] API key display
 - [x] API key regeneration
-- [x] Agent connection setup
+- [x] Workflow connection setup
 
 ---
 
@@ -826,7 +826,7 @@ The frontend is still evolving alongside the Beacon backend.
 Current limitations include:
 
 - Very large execution graphs may require further layout optimization.
-- The current visualization is primarily optimized for developer-facing agent workflows.
+- The current visualization is primarily optimized for developer-facing AI workflows.
 - Advanced filtering and search across large run histories are future improvements.
 - The dashboard depends on the Beacon API for persisted state and realtime events.
 
